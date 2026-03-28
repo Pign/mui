@@ -20,7 +20,13 @@ class VStack extends wui.ui.VStack {
 #elseif (mui_backend == "cui")
 class VStack extends cui.ui.VStack {
     public function new(content:Array<cui.View>, ?spacing:Float) {
-        super(content, spacing != null ? Std.int(spacing) : 0);
+        // GUI spacing is in pixels; terminal spacing is in rows.
+        // Scale down: 1-7 → 1 row, 8+ → 1 row per 8px, capped at 2.
+        var s = 0;
+        if (spacing != null && spacing > 0) {
+            s = Std.int(Math.max(1, Math.min(2, Math.ceil(spacing / 8))));
+        }
+        super(content, s);
     }
 }
 #else

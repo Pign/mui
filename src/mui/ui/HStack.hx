@@ -17,7 +17,11 @@ class HStack extends wui.ui.HStack {
 #elseif (mui_backend == "cui")
 class HStack extends cui.ui.HStack {
     public function new(content:Array<cui.View>, ?spacing:Float) {
-        super(content, spacing != null ? Std.int(spacing) : 0);
+        var s = 0;
+        if (spacing != null && spacing > 0) {
+            s = Std.int(Math.max(1, Math.min(4, Math.ceil(spacing / 4))));
+        }
+        super(content, s);
     }
 }
 #else
