@@ -9,6 +9,7 @@
 Backend-specific requirements:
 - **sui**: macOS with Xcode
 - **wui**: Windows with Visual Studio 2022 (C++ workload)
+- **aui**: Android SDK, Gradle, JDK 17+
 - **cui**: any terminal (macOS, Linux)
 
 ## Installation
@@ -20,6 +21,7 @@ haxelib git mui https://github.com/Pign/mui
 # Install backend(s)
 haxelib git sui https://github.com/Pign/sui
 haxelib git wui https://github.com/Pign/wui
+haxelib git aui https://github.com/Pign/aui
 haxelib git cui https://github.com/Pign/cui
 ```
 
@@ -32,7 +34,7 @@ cd MyApp
 
 This creates:
 - `src/MyApp.hx` -- your app with a counter template
-- `build-sui.hxml` / `build-wui.hxml` / `build-cui.hxml` -- build files for each backend
+- `build-sui.hxml` / `build-wui.hxml` / `build-aui.hxml` / `build-cui.hxml` -- build files for each backend
 - `mui.json` -- project metadata
 
 ## Build and Run
@@ -47,6 +49,9 @@ haxelib run mui build sui
 
 # Windows
 haxelib run mui build wui
+
+# Android
+haxelib run mui build aui
 ```
 
 ## Project Structure

@@ -28,6 +28,7 @@ Builds the project for the specified backend.
 |---------|-------------|
 | `sui` | Delegates to `haxelib run sui build` (Haxe + Swift + Xcode) |
 | `wui` | Delegates to `haxelib run wui build` (Haxe + C++/WinRT + MSBuild) |
+| `aui` | Delegates to `haxelib run aui build` (Haxe + JVM + Kotlin + Gradle) |
 | `cui` | Runs `haxe build-cui.hxml` directly (Haxe + hxcpp) |
 
 ### run

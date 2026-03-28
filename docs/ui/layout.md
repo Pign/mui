@@ -61,4 +61,26 @@ new VStack([
 
 **Constructor**: `Divider()`
 
-Maps to SwiftUI `Divider`, a styled `Border` on WinUI, and a terminal line on cui.
+Maps to SwiftUI `Divider`, a styled `Border` on WinUI, `HorizontalDivider` on Compose, and a terminal line on cui.
+
+## SafeArea
+
+Wraps content to respect platform safe areas (notch, status bar, home indicator).
+
+```haxe
+new SafeArea([
+    new Text("Title"),
+    new VStack([...]),
+])
+```
+
+**Constructor**: `SafeArea(children:Array<View>)`
+
+Also available as a modifier: `new SafeArea([...]).safeArea()`
+
+| Backend | Behavior |
+|---------|----------|
+| sui | No-op (SwiftUI respects safe areas by default) |
+| aui | `Column` with `Modifier.safeDrawingPadding()` |
+| wui | No-op (Windows has no safe areas) |
+| cui | No-op (terminal has no safe areas) |

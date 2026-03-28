@@ -1,11 +1,12 @@
 # mui
 
-**mui** is a cross-platform UI abstraction layer for Haxe. It wraps three backend libraries under a single API:
+**mui** is a cross-platform UI abstraction layer for Haxe. It wraps four backend libraries under a single API:
 
 | Backend | Platform | Library |
 |---------|----------|---------|
 | `sui` | macOS, iOS, visionOS (SwiftUI) | [Pign/sui](https://github.com/Pign/sui) |
 | `wui` | Windows (WinUI 3) | [Pign/wui](https://github.com/Pign/wui) |
+| `aui` | Android (Jetpack Compose) | [Pign/aui](https://github.com/Pign/aui) |
 | `cui` | Terminal (TUI) | [Pign/cui](https://github.com/Pign/cui) |
 
 You write your app once and compile to any backend by setting a `-D mui_backend` flag. All mui types compile down to backend types with zero runtime overhead.

@@ -1,6 +1,6 @@
 # mui
 
-Multi-UI abstraction layer for Haxe. Write your app once, compile to native macOS/iOS (SwiftUI), Windows (WinUI 3), or terminal (TUI).
+Multi-UI abstraction layer for Haxe. Write your app once, compile to native macOS/iOS (SwiftUI), Windows (WinUI 3), Android (Jetpack Compose), or terminal (TUI).
 
 ## Quick Start
 
@@ -11,19 +11,21 @@ cd MyApp
 mui run cui       # terminal
 mui build sui     # macOS/iOS
 mui build wui     # Windows
+mui build aui     # Android
 ```
 
 ## How It Works
 
-mui is a thin wrapper over three backend libraries:
+mui is a thin wrapper over four backend libraries:
 
 | Backend | Target Platform | Library |
 |---------|----------------|---------|
 | `sui`   | macOS, iOS, visionOS (SwiftUI) | [Pign/sui](https://github.com/Pign/sui) |
 | `wui`   | Windows (WinUI 3) | [Pign/wui](https://github.com/Pign/wui) |
+| `aui`   | Android (Jetpack Compose) | [Pign/aui](https://github.com/Pign/aui) |
 | `cui`   | Terminal (TUI) | [Pign/cui](https://github.com/Pign/cui) |
 
-Backend selection is compile-time via `-D mui_backend=sui|wui|cui`. All mui types compile down to the backend types with zero runtime overhead.
+Backend selection is compile-time via `-D mui_backend=sui|wui|aui|cui`. All mui types compile down to the backend types with zero runtime overhead.
 
 ## Example
 
