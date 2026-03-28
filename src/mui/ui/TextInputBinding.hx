@@ -29,7 +29,10 @@ abstract TextInputBinding(wui.state.State<String>) {
 abstract TextInputBinding(cui.state.Binding<String>) {
     public inline function new(v:cui.state.Binding<String>) this = v;
 
-    @:from static inline function fromState(s:cui.state.State.StringState):TextInputBinding
+    @:from static inline function fromStringState(s:cui.state.State.StringState):TextInputBinding
+        return new TextInputBinding(cui.state.Binding.from(s));
+
+    @:from static inline function fromState(s:cui.state.State<String>):TextInputBinding
         return new TextInputBinding(cui.state.Binding.from(s));
 
     public inline function unwrap():cui.state.Binding<String> return this;

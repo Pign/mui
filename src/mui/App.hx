@@ -9,7 +9,6 @@ package mui;
     - Default Ctrl+C / q quit handling on cui
 **/
 #if (mui_backend == "sui")
-@:autoBuild(sui.macros.StateMacro.build())
 class App extends sui.App {
     /** Set the application title. Maps to sui's appName. **/
     public var appTitle(get, set):String;
@@ -19,7 +18,6 @@ class App extends sui.App {
 }
 
 #elseif (mui_backend == "wui")
-@:autoBuild(wui.macros.StateMacro.build())
 class App extends wui.App {
     var _appTitle:String = "App";
 
@@ -33,7 +31,6 @@ class App extends wui.App {
 }
 
 #elseif (mui_backend == "cui")
-@:autoBuild(cui.macros.StateMacro.build())
 class App extends cui.App {
     /** App title (informational on cui — terminal has no title bar). **/
     public var appTitle:String = "App";

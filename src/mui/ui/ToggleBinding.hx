@@ -29,8 +29,14 @@ abstract ToggleBinding(wui.state.State<Bool>) {
 abstract ToggleBinding(cui.ui.Checkbox.CheckboxBinding) {
     public inline function new(v:cui.ui.Checkbox.CheckboxBinding) this = v;
 
-    @:from static inline function fromState(s:cui.state.State.BoolState):ToggleBinding
+    @:from static inline function fromBoolState(s:cui.state.State.BoolState):ToggleBinding
         return new ToggleBinding(cui.ui.Checkbox.CheckboxBinding.fromState(s));
+
+    @:from static inline function fromState(s:cui.state.State<Bool>):ToggleBinding
+        return new ToggleBinding(new cui.ui.Checkbox.CheckboxBinding(
+            () -> s.get(),
+            (v) -> s.set(v)
+        ));
 
     public inline function unwrap():cui.ui.Checkbox.CheckboxBinding return this;
 }
