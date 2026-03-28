@@ -24,6 +24,15 @@ class Button extends cui.ui.Button {
         super(label, action != null ? action : function() {});
     }
 }
+#elseif (mui_backend == "aui")
+class Button extends aui.ui.Button {
+    public function new(label:String, ?action:() -> Void) {
+        super(label);
+        if (action != null) {
+            onTapGesture(action);
+        }
+    }
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

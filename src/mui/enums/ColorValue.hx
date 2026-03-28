@@ -118,5 +118,26 @@ abstract ColorValue(ColorValueKind) from ColorValueKind to ColorValueKind {
         var b = Std.parseInt("0x" + s.substr(4, 2));
         return cui.render.Color.Rgb(r != null ? r : 0, g != null ? g : 0, b != null ? b : 0);
     }
+    #elseif (mui_backend == "aui")
+    public function toBackend():aui.modifiers.ViewModifier.ColorValue {
+        return switch (cast this : ColorValueKind) {
+            case Primary: aui.modifiers.ViewModifier.ColorValue.Primary;
+            case Secondary: aui.modifiers.ViewModifier.ColorValue.Secondary;
+            case Accent: aui.modifiers.ViewModifier.ColorValue.Accent;
+            case Red: aui.modifiers.ViewModifier.ColorValue.Red;
+            case Orange: aui.modifiers.ViewModifier.ColorValue.Orange;
+            case Yellow: aui.modifiers.ViewModifier.ColorValue.Yellow;
+            case Green: aui.modifiers.ViewModifier.ColorValue.Green;
+            case Blue: aui.modifiers.ViewModifier.ColorValue.Blue;
+            case Purple: aui.modifiers.ViewModifier.ColorValue.Purple;
+            case Pink: aui.modifiers.ViewModifier.ColorValue.Pink;
+            case White: aui.modifiers.ViewModifier.ColorValue.White;
+            case Black: aui.modifiers.ViewModifier.ColorValue.Black;
+            case Gray: aui.modifiers.ViewModifier.ColorValue.Gray;
+            case Clear: aui.modifiers.ViewModifier.ColorValue.Transparent;
+            case Rgb(r, g, b): aui.modifiers.ViewModifier.ColorValue.Custom('#${StringTools.hex(r, 2)}${StringTools.hex(g, 2)}${StringTools.hex(b, 2)}');
+            case Hex(h): aui.modifiers.ViewModifier.ColorValue.Custom(h);
+        };
+    }
     #end
 }

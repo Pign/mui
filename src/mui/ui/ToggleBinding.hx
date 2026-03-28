@@ -40,6 +40,15 @@ abstract ToggleBinding(cui.ui.Checkbox.CheckboxBinding) {
 
     public inline function unwrap():cui.ui.Checkbox.CheckboxBinding return this;
 }
+#elseif (mui_backend == "aui")
+abstract ToggleBinding(aui.state.State<Bool>) {
+    public inline function new(v:aui.state.State<Bool>) this = v;
+
+    @:from static inline function fromState(s:aui.state.State<Bool>):ToggleBinding
+        return new ToggleBinding(s);
+
+    public inline function unwrap():aui.state.State<Bool> return this;
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

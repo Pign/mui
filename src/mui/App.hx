@@ -50,6 +50,13 @@ class App extends cui.App {
     }
 }
 
+#elseif (mui_backend == "aui")
+class App extends aui.App {
+    public var appTitle(get, set):String;
+    function get_appTitle():String return appName;
+    function set_appTitle(v:String):String { appName = v; return v; }
+}
+
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

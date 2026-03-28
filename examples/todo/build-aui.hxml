@@ -1,0 +1,7 @@
+-cp .
+-cp ../../src
+-lib aui
+-D mui_backend=aui
+--macro aui.macros.ComposeGenerator.register()
+-main TodoApp
+--jvm build/app-logic.jar

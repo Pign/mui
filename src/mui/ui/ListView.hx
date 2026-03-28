@@ -11,6 +11,8 @@ typedef ListView = sui.ui.List;
 typedef ListView = wui.ui.ListView;
 #elseif (mui_backend == "cui")
 typedef ListView = cui.ui.ListView;
+#elseif (mui_backend == "aui")
+typedef ListView = aui.ui.LazyColumn;
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

@@ -8,6 +8,8 @@ typedef Text = sui.ui.Text;
 typedef Text = wui.ui.Text;
 #elseif (mui_backend == "cui")
 typedef Text = cui.ui.Text;
+#elseif (mui_backend == "aui")
+typedef Text = aui.ui.Text;
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

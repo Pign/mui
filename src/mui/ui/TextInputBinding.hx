@@ -37,6 +37,15 @@ abstract TextInputBinding(cui.state.Binding<String>) {
 
     public inline function unwrap():cui.state.Binding<String> return this;
 }
+#elseif (mui_backend == "aui")
+abstract TextInputBinding(aui.state.State<String>) {
+    public inline function new(v:aui.state.State<String>) this = v;
+
+    @:from static inline function fromState(s:aui.state.State<String>):TextInputBinding
+        return new TextInputBinding(s);
+
+    public inline function unwrap():aui.state.State<String> return this;
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

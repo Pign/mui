@@ -37,6 +37,13 @@ class Run {
                 for (a in extraArgs) wuiArgs.push(a);
                 Sys.exit(Sys.command("haxelib", wuiArgs));
 
+            case "aui":
+                // aui CLI handles full pipeline + deploy to emulator/device
+                Build.ensureBuildHxml(cwd, backend);
+                var auiArgs = ["run", "aui", "run"];
+                for (a in extraArgs) auiArgs.push(a);
+                Sys.exit(Sys.command("haxelib", auiArgs));
+
             case "cui":
                 // Build first, then run the binary
                 Build.run(cwd, args);

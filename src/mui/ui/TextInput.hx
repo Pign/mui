@@ -27,6 +27,12 @@ class TextInput extends cui.ui.Input {
         super(state.unwrap(), placeholder);
     }
 }
+#elseif (mui_backend == "aui")
+class TextInput extends aui.ui.TextField {
+    public function new(placeholder:String, state:TextInputBinding) {
+        super(placeholder, state.unwrap());
+    }
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

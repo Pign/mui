@@ -24,6 +24,12 @@ class TabView extends cui.ui.Tabs {
         super([for (t in tabs) {label: t.label, content: t.content}], active);
     }
 }
+#elseif (mui_backend == "aui")
+class TabView extends aui.ui.TabView {
+    public function new(tabs:Array<TabItem>) {
+        super([for (t in tabs) new aui.ui.Tab(t.label, "", t.content)]);
+    }
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

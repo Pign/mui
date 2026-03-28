@@ -62,5 +62,16 @@ abstract FontStyle(FontStyleKind) from FontStyleKind to FontStyleKind {
             default: false;
         };
     }
+    #elseif (mui_backend == "aui")
+    public function toBackend():aui.modifiers.ViewModifier.FontStyle {
+        return switch (cast this : FontStyleKind) {
+            case LargeTitle: aui.modifiers.ViewModifier.FontStyle.DisplayLarge;
+            case Title: aui.modifiers.ViewModifier.FontStyle.TitleLarge;
+            case Headline: aui.modifiers.ViewModifier.FontStyle.HeadlineMedium;
+            case Body: aui.modifiers.ViewModifier.FontStyle.BodyMedium;
+            case Caption: aui.modifiers.ViewModifier.FontStyle.LabelSmall;
+            case Custom(name, size): aui.modifiers.ViewModifier.FontStyle.CustomFont(name, size);
+        };
+    }
     #end
 }

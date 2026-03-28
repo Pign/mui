@@ -40,6 +40,16 @@ class Init {
 -cpp build/wui
 ');
 
+        // build-aui.hxml
+        File.saveContent('$projectDir/build-aui.hxml', '-cp src
+-lib mui
+-lib aui
+-D mui_backend=aui
+--macro aui.macros.ComposeGenerator.register()
+-main $projectName
+--jvm build/app-logic.jar
+');
+
         // build-cui.hxml
         File.saveContent('$projectDir/build-cui.hxml', '-cp src
 -lib mui

@@ -6,6 +6,10 @@ typedef ViewComponent = sui.ViewComponent;
 typedef ViewComponent = wui.ViewComponent;
 #elseif (mui_backend == "cui")
 typedef ViewComponent = cui.ViewComponent;
+#elseif (mui_backend == "aui")
+class ViewComponent extends aui.View {
+    public function body():aui.View { return this; }
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

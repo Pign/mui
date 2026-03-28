@@ -49,6 +49,14 @@ class Build {
                 var code = Sys.command("haxelib", wuiArgs);
                 if (code != 0) Sys.exit(code);
 
+            case "aui":
+                // aui CLI handles: Haxe → JVM → Kotlin codegen → Gradle → APK
+                ensureBuildHxml(cwd, backend);
+                var auiArgs = ["run", "aui", "build"];
+                for (a in extraArgs) auiArgs.push(a);
+                var code = Sys.command("haxelib", auiArgs);
+                if (code != 0) Sys.exit(code);
+
             case "cui":
                 // cui compiles directly — no special pipeline
                 var code = Sys.command("haxe", [hxmlFile]);
@@ -57,7 +65,7 @@ class Build {
 
             default:
                 Sys.println('Unknown backend: $backend');
-                Sys.println("Available backends: sui, wui, cui");
+                Sys.println("Available backends: sui, wui, cui, aui");
                 Sys.exit(1);
         }
     }

@@ -19,6 +19,8 @@ class ScrollView extends cui.ui.ScrollView {
         super(child, offset);
     }
 }
+#elseif (mui_backend == "aui")
+typedef ScrollView = aui.ui.ScrollView;
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

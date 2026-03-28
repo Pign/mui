@@ -6,6 +6,8 @@ typedef View = sui.View;
 typedef View = wui.View;
 #elseif (mui_backend == "cui")
 typedef View = cui.View;
+#elseif (mui_backend == "aui")
+typedef View = aui.View;
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

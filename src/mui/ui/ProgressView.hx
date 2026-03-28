@@ -23,6 +23,12 @@ class ProgressView extends cui.ui.ProgressBar {
         super(value != null ? value : 0.0, label != null ? label : "");
     }
 }
+#elseif (mui_backend == "aui")
+class ProgressView extends aui.ui.ProgressView {
+    public function new(?label:String, ?value:Float) {
+        super(null);
+    }
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end

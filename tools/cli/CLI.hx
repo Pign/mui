@@ -56,7 +56,7 @@ class CLI {
 
     static function printUsage() {
         Sys.println("
-mui — Multi-UI: write once, deploy to macOS/iOS, Windows, and terminal
+mui — Multi-UI: write once, deploy to macOS/iOS, Windows, Android, and terminal
 
 Usage: mui <command> [options]
 
@@ -71,6 +71,7 @@ Commands:
 Backends:
   sui                  macOS / iOS / visionOS (via SwiftUI)
   wui                  Windows (via WinUI 3)
+  aui                  Android (via Jetpack Compose)
   cui                  Terminal (TUI)
 
 Examples:

@@ -31,6 +31,14 @@ abstract HorizontalAlignment(HorizontalAlignmentKind) from HorizontalAlignmentKi
             case Trailing: wui.modifiers.ViewModifier.HorizontalAlign.Right;
         };
     }
+    #elseif (mui_backend == "aui")
+    public function toBackend():aui.ui.VStack.HorizontalAlignment {
+        return switch (cast this : HorizontalAlignmentKind) {
+            case Leading: aui.ui.VStack.HorizontalAlignment.Start;
+            case Center: aui.ui.VStack.HorizontalAlignment.Center;
+            case Trailing: aui.ui.VStack.HorizontalAlignment.End;
+        };
+    }
     #end
 }
 
@@ -63,6 +71,14 @@ abstract VerticalAlignment(VerticalAlignmentKind) from VerticalAlignmentKind to 
             case Top: wui.modifiers.ViewModifier.VerticalAlign.Top;
             case Center: wui.modifiers.ViewModifier.VerticalAlign.Center;
             case Bottom: wui.modifiers.ViewModifier.VerticalAlign.Bottom;
+        };
+    }
+    #elseif (mui_backend == "aui")
+    public function toBackend():aui.ui.HStack.VerticalAlignment {
+        return switch (cast this : VerticalAlignmentKind) {
+            case Top: aui.ui.HStack.VerticalAlignment.Top;
+            case Center: aui.ui.HStack.VerticalAlignment.Center;
+            case Bottom: aui.ui.HStack.VerticalAlignment.Bottom;
         };
     }
     #end

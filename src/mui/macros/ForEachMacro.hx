@@ -28,7 +28,7 @@ class ForEachMacro {
     public static function transform(items:Expr, builder:Expr):Expr {
         var backend = Context.definedValue("mui_backend");
         if (backend == null) {
-            Context.error("mui requires -D mui_backend=sui|wui|cui", items.pos);
+            Context.error("mui requires -D mui_backend=sui|wui|cui|aui", items.pos);
             return macro null;
         }
 
@@ -39,6 +39,9 @@ class ForEachMacro {
                 return transformCui(items, builder);
             case "wui":
                 return transformWui(items, builder);
+            case "aui":
+                // aui uses Compose codegen like sui — same AST transform
+                return transformAui(items, builder);
             default:
                 Context.error('Unknown mui_backend: $backend', items.pos);
                 return macro null;
@@ -91,6 +94,11 @@ class ForEachMacro {
 
     static function transformWui(items:Expr, builder:Expr):Expr {
         return macro new wui.ui.ForEach($items, $builder);
+    }
+
+    static function transformAui(items:Expr, builder:Expr):Expr {
+        // aui ForEach takes (items:Dynamic, builder:Dynamic) — runtime style
+        return macro new aui.ui.ForEach($items, $builder);
     }
 
     /**

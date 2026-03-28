@@ -26,6 +26,12 @@ class Toggle extends cui.ui.Checkbox {
         super(label, state.unwrap());
     }
 }
+#elseif (mui_backend == "aui")
+class Toggle extends aui.ui.Toggle {
+    public function new(label:String, state:ToggleBinding) {
+        super(label, state.unwrap());
+    }
+}
 #else
-#error "mui requires -D mui_backend=sui|wui|cui"
+#error "mui requires -D mui_backend=sui|wui|cui|aui"
 #end
