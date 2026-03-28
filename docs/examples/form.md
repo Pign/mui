@@ -1,13 +1,11 @@
+# Form
+
+A registration form with text inputs, toggles, and action buttons.
+
+```haxe
 import mui.App;
 import mui.View;
-import mui.ui.Text;
-import mui.ui.VStack;
-import mui.ui.HStack;
-import mui.ui.Button;
-import mui.ui.Spacer;
-import mui.ui.Toggle;
-import mui.ui.TextInput;
-import mui.ui.Divider;
+import mui.ui.*;
 
 class FormApp extends App {
     @:state var name:String = "";
@@ -31,9 +29,7 @@ class FormApp extends App {
             new Toggle("I accept the terms", terms),
             new Divider(),
             new HStack([
-                new Button("Submit", function() {
-                    // Handle submit
-                }),
+                new Button("Submit", function() { /* handle */ }),
                 new Button("Clear", function() {
                     name.set("");
                     email.set("");
@@ -51,3 +47,11 @@ class FormApp extends App {
         #end
     }
 }
+```
+
+## What it demonstrates
+
+- `TextInput` with type-safe `TextInputBinding` -- no `#if` blocks
+- `Toggle` with type-safe `ToggleBinding` -- no `#if` blocks
+- `Divider` as a visual separator
+- `appTitle` for setting the window title

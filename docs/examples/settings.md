@@ -1,12 +1,11 @@
+# Settings
+
+A settings screen with toggles, dividers, and an app title.
+
+```haxe
 import mui.App;
 import mui.View;
-import mui.ui.Text;
-import mui.ui.VStack;
-import mui.ui.HStack;
-import mui.ui.Button;
-import mui.ui.Spacer;
-import mui.ui.Toggle;
-import mui.ui.Divider;
+import mui.ui.*;
 
 class SettingsApp extends App {
     @:state var darkMode:Bool = false;
@@ -44,3 +43,10 @@ class SettingsApp extends App {
         #end
     }
 }
+```
+
+## What it demonstrates
+
+- Multiple `Toggle` bindings with zero `#if` blocks
+- `Divider` for visual sections
+- `appTitle` property

@@ -1,12 +1,11 @@
+# Dashboard
+
+A system monitoring dashboard with progress indicators and stats.
+
+```haxe
 import mui.App;
 import mui.View;
-import mui.ui.Text;
-import mui.ui.VStack;
-import mui.ui.HStack;
-import mui.ui.Button;
-import mui.ui.Spacer;
-import mui.ui.ProgressView;
-import mui.ui.Divider;
+import mui.ui.*;
 
 class DashboardApp extends App {
     public function new() {
@@ -54,3 +53,11 @@ class DashboardApp extends App {
         #end
     }
 }
+```
+
+## What it demonstrates
+
+- `ProgressView` for status bars
+- Helper functions for repeated UI patterns
+- `Spacer` for flexible layout
+- Zero `#if` blocks in UI code

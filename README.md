@@ -32,58 +32,112 @@ import mui.App;
 import mui.View;
 import mui.ui.*;
 
-class MyApp extends App {
+class Counter extends App {
     @:state var count:Int = 0;
 
     override function body():View {
-        #if (mui_backend == "cui")
-        var c = count.get();
-        #else
-        var c = count.value;
-        #end
-
         return new VStack([
-            new Text("Counter"),
-            new Text('Count: $c'),
+            new Text('Count: ${count.get()}'),
             new HStack([
-                #if (mui_backend == "cui")
                 new Button("-", function() count.set(count.get() - 1)),
                 new Button("+", function() count.set(count.get() + 1)),
-                #else
-                new Button("-", function() count.value = count.value - 1),
-                new Button("+", function() count.value = count.value + 1),
-                #end
             ], 8),
         ], 10);
+    }
+
+    static function main() {
+        #if (mui_backend == "cui")
+        new Counter().run();
+        #end
     }
 }
 ```
 
+No `#if` blocks in the UI code. The only conditional is the `main()` entry point for the terminal backend.
+
 ## Unified Components
 
-These components have normalized constructors that work across all backends:
+| mui Component | Constructor | Notes |
+|--------------|-------------|-------|
+| `Text` | `Text(content)` | |
+| `VStack` | `VStack(children, ?spacing)` | |
+| `HStack` | `HStack(children, ?spacing)` | |
+| `Button` | `Button(label, ?action)` | Closure-based |
+| `Toggle` | `Toggle(label, state)` | Accepts `@:state` Bool field directly |
+| `TextInput` | `TextInput(placeholder, state)` | Accepts `@:state` String field directly |
+| `ForEach` | `ForEach.build(items, item -> view)` | Macro-based, see below |
+| `Spacer` | `Spacer()` | |
+| `Divider` | `Divider()` | |
+| `ProgressView` | `ProgressView(?label, ?value)` | |
+| `Image` | `Image(source)` | Not available on cui |
+| `ListView` | Backend-specific | |
+| `ScrollView` | Backend-specific | |
+| `TabView` | Backend-specific | |
 
-| mui Component | sui | wui | cui |
-|--------------|-----|-----|-----|
-| `Text(content)` | Text | Text | Text |
-| `VStack(children, ?spacing)` | VStack | VStack | VStack |
-| `HStack(children, ?spacing)` | HStack | HStack | HStack |
-| `Button(label, ?action)` | Button | Button | Button |
-| `Spacer()` | Spacer | Spacer | Spacer |
-| `Divider()` | Divider | Border | Divider |
-| `ProgressView(?label, ?value)` | ProgressView | ProgressRing | ProgressBar |
+## Toggle and TextInput
 
-These are direct typedefs (backend-specific constructors):
+Toggle and TextInput accept `@:state` fields directly via type-safe abstract bindings (`ToggleBinding` / `TextInputBinding`). The `@:from` conversion handles the backend differences automatically:
 
-| mui Component | Notes |
-|--------------|-------|
-| `Toggle` | Binding types differ per backend |
-| `TextInput` | Binding types differ per backend |
-| `ForEach` | String-based codegen (sui) vs runtime (cui/wui) |
-| `ListView` | Constructor differs per backend |
-| `ScrollView` | cui requires scroll offset binding |
-| `TabView` | cui requires active tab binding |
-| `Image` | Not available on cui |
+```haxe
+@:state var darkMode:Bool = false;
+@:state var username:String = "";
+
+// Works on all backends — no #if needed
+new Toggle("Dark Mode", darkMode),
+new TextInput("Enter username", username),
+```
+
+## ForEach
+
+`ForEach.build()` is a compile-time macro that transforms a builder closure into the correct backend representation:
+
+```haxe
+@:state var todos:Array<String> = [];
+
+// Works on all backends
+ForEach.build(todos, item -> new Text(item))
+
+// With object fields
+ForEach.build(todos, item -> new HStack([
+    new Text(item.title),
+    new Spacer(),
+]))
+```
+
+On SUI, the macro transforms `item.title` references into string templates for Swift code generation. On CUI/WUI, the builder closure runs at runtime.
+
+## State API
+
+The `@:state` macro works on all backends. All backends support both `.get()`/`.set()` and `.value`:
+
+```haxe
+@:state var count:Int = 0;
+
+// Read
+var c = count.get();    // works everywhere
+var c = count.value;    // works everywhere
+
+// Write
+count.set(5);           // works everywhere
+count.value = 5;        // works everywhere
+```
+
+## App Class
+
+`mui.App` provides a unified base class:
+
+```haxe
+class MyApp extends App {
+    public function new() {
+        super();
+        appTitle = "My Application";  // sets window title on sui/wui
+    }
+
+    override function body():View { ... }
+}
+```
+
+On cui, the App class provides default Ctrl+C / q handling to quit. Override `handleEvent` for custom key bindings.
 
 ## Unified Enums
 
@@ -93,40 +147,9 @@ These are direct typedefs (backend-specific constructors):
 import mui.enums.ColorValue;
 import mui.enums.FontStyle;
 
-// Use .toBackend() to pass to backend modifiers
 view.foregroundColor(ColorValue.Red.toBackend());
 view.font(FontStyle.Title.toBackend());
 ```
-
-### ColorValue
-
-`Primary`, `Secondary`, `Accent`, `Red`, `Orange`, `Yellow`, `Green`, `Blue`, `Purple`, `Pink`, `White`, `Black`, `Gray`, `Clear`, `Rgb(r,g,b)`, `Hex("#RRGGBB")`
-
-### FontStyle
-
-`LargeTitle`, `Title`, `Headline`, `Body`, `Caption`, `Custom(name, size)`
-
-On cui (terminal), fonts map to bold/dim text attributes.
-
-## State API
-
-The `@:state` macro works on all backends:
-
-```haxe
-@:state var count:Int = 0;
-```
-
-State access methods differ by backend:
-
-| Method | sui | wui | cui |
-|--------|-----|-----|-----|
-| `.value` | Yes | Yes | No |
-| `.get()` | Yes | No | Yes |
-| `.set(v)` | Yes | No | Yes |
-| `.inc()` | Yes (returns StateAction) | Yes (returns StateAction) | Yes (returns Void) |
-| `.dec()` | Yes (returns StateAction) | Yes (returns StateAction) | Yes (returns Void) |
-
-Use `#if (mui_backend == "cui")` blocks around state access for cross-platform code.
 
 ## Platform-Specific Code
 
@@ -134,16 +157,10 @@ Use Haxe's conditional compilation for backend-specific features:
 
 ```haxe
 #if (mui_backend == "sui")
-// SwiftUI-specific: navigation, sheets, animations
 view.navigationTitle("Settings");
-view.sheet(isShowingBinding, sheetContent);
 #elseif (mui_backend == "wui")
-// WinUI-specific: window size, tooltips
-windowWidth = 1024;
 view.toolTip("Help text");
 #elseif (mui_backend == "cui")
-// Terminal-specific: event handling, borders
-override function handleEvent(event:cui.event.Event):Bool { ... }
 view.border(cui.render.BorderStyle.Rounded);
 #end
 ```
@@ -160,18 +177,9 @@ mui version           Show version
 
 ## Adding a New Backend
 
-To add a new backend (e.g., `gtk` for Linux):
-
-1. Create the backend library with the standard structure:
-   - `App` base class with `@:autoBuild` StateMacro
-   - `View` base class with modifier methods
-   - `state/State<T>` with reactive state
-   - `ui/` components (Text, VStack, HStack, Button, etc.)
-
-2. Add `#elseif (mui_backend == "gtk")` blocks to each mui file (~20 files). Each addition is 2-5 lines: import the backend type and adapt the constructor.
-
-3. Add color/font mappings in `mui/enums/ColorValue.hx` and `FontStyle.hx`.
-
+1. Create the backend library with: `App` base class, `View` with modifiers, `State<T>` with `.get()`/`.set()`/`.value`, and `ui/` components.
+2. Add `#elseif (mui_backend == "newbackend")` blocks to each mui file (~20 files).
+3. Add color/font mappings and a `ToggleBinding`/`TextInputBinding` `@:from` conversion.
 4. Add a build case in `tools/cli/Build.hx` and `Run.hx`.
 
 ## Prerequisites

@@ -1,3 +1,8 @@
+# Counter
+
+The simplest example: a counter with increment, decrement, and reset buttons.
+
+```haxe
 import mui.App;
 import mui.View;
 import mui.ui.Text;
@@ -29,3 +34,12 @@ class Counter extends App {
         #end
     }
 }
+```
+
+## What it demonstrates
+
+- `@:state` reactive state declaration
+- `.get()` / `.set()` for cross-platform state access
+- `VStack` / `HStack` layout
+- `Button` with closure actions
+- Zero `#if` blocks in the UI code

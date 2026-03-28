@@ -1,12 +1,11 @@
+# Todo App
+
+A dynamic todo list using `ForEach.build()` to iterate over items.
+
+```haxe
 import mui.App;
 import mui.View;
-import mui.ui.Text;
-import mui.ui.VStack;
-import mui.ui.HStack;
-import mui.ui.Button;
-import mui.ui.Spacer;
-import mui.ui.TextInput;
-import mui.ui.ForEach;
+import mui.ui.*;
 
 class TodoApp extends App {
     @:state var inputText:String = "";
@@ -51,3 +50,10 @@ class TodoApp extends App {
         #end
     }
 }
+```
+
+## What it demonstrates
+
+- `ForEach.build()` macro -- works across all backends without `#if`
+- Dynamic array state with `.get()` / `.set()`
+- `TextInput` for adding new items

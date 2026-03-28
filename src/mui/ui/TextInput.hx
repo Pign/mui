@@ -1,26 +1,28 @@
 package mui.ui;
 
-// Text input binding mechanisms differ across backends:
-//   sui: TextField(placeholder, textBinding:String) -- string name for Swift codegen
-//   wui: TextBox(?placeholder, ?binding:Dynamic)
-//   cui: Input(binding:Binding<String>, placeholder)
+import mui.ui.TextInputBinding;
+
+// Unified text input (TextField/TextBox/Input).
+// User writes: new TextInput("Enter name...", nameState)
+// The TextInputBinding abstract handles conversion via @:from.
 
 #if (mui_backend == "sui")
 class TextInput extends sui.ui.TextField {
-    public function new(placeholder:String, textBinding:String) {
-        super(placeholder, textBinding);
+    public function new(placeholder:String, state:TextInputBinding) {
+        super(placeholder, state.unwrap());
     }
 }
 #elseif (mui_backend == "wui")
 class TextInput extends wui.ui.TextBox {
-    public function new(?placeholder:String, ?binding:Dynamic) {
-        super(placeholder, binding);
+    public function new(placeholder:String, state:TextInputBinding) {
+        super(placeholder, state.unwrap());
     }
 }
 #elseif (mui_backend == "cui")
 class TextInput extends cui.ui.Input {
-    public function new(binding:cui.state.Binding<String>, placeholder:String = "") {
-        super(binding, placeholder);
+    public function new(placeholder:String, state:TextInputBinding) {
+        // cui.ui.Input takes (binding, placeholder) — reversed order
+        super(state.unwrap(), placeholder);
     }
 }
 #else
