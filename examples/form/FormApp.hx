@@ -42,7 +42,7 @@ class FormApp extends App {
                 }),
             ], 8),
             new Spacer(),
-        ], 8);
+        ], 8).padding();
     }
 
     static function main() {
