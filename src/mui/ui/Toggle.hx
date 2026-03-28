@@ -7,8 +7,10 @@ import mui.ui.ToggleBinding;
 // The ToggleBinding abstract handles conversion via @:from.
 
 #if (mui_backend == "sui")
+@:swiftView("Toggle")
 class Toggle extends sui.ui.Toggle {
-    public function new(label:String, state:ToggleBinding) {
+    public function new(@:swiftLabel("_") label:String,
+                        @:swiftLabel("isOn") @:swiftBinding state:ToggleBinding) {
         super(label, state.unwrap());
     }
 }
