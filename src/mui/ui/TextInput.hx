@@ -7,6 +7,7 @@ import mui.ui.TextInputBinding;
 // The TextInputBinding abstract handles conversion via @:from.
 
 #if (mui_backend == "sui")
+@:swiftView("TextField")
 class TextInput extends sui.ui.TextField {
     public function new(placeholder:String, state:TextInputBinding) {
         super(placeholder, state.unwrap());
