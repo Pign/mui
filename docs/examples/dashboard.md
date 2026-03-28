@@ -58,6 +58,6 @@ class DashboardApp extends App {
 ## What it demonstrates
 
 - `ProgressView` for status bars
-- Helper functions for repeated UI patterns
+- View helper functions (`statusRow`, `infoRow`) — on sui, inlined by the SwiftGenerator at compile time
 - `Spacer` for flexible layout
 - Zero `#if` blocks in UI code

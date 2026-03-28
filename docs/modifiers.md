@@ -35,6 +35,42 @@ new Text("Warning")
 
 See [Enums](enums.md) for the full color and font mappings.
 
+## Presentation Modifiers (sui)
+
+On sui, presentation modifiers accept `@:state` field references directly — no string names needed:
+
+```haxe
+@:state var showSheet:Bool = false;
+
+view.sheet(showSheet, sheetContent)
+view.alert("Warning", showAlert, "message")
+view.fullScreenCover(showModal, content)
+view.popover(showPopover, content)
+view.confirmationDialog("Confirm", showConfirm, content)
+```
+
+## View Helper Functions
+
+All backends support extracting repeated UI patterns into functions that return `View`. On sui, the SwiftGenerator inlines these at compile time:
+
+```haxe
+function statusRow(label:String, value:Float):View {
+    return new HStack([
+        new Text(label),
+        new ProgressView(null, value),
+    ], 8);
+}
+
+override function body():View {
+    return new VStack([
+        statusRow("CPU", 0.73),
+        statusRow("Memory", 0.45),
+    ]);
+}
+```
+
+Both instance methods and static methods on other classes are supported.
+
 ## Backend-Specific Modifiers
 
 Use `#if` blocks for modifiers that only exist on one backend:

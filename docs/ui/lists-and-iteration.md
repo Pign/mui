@@ -29,7 +29,7 @@ ForEach.build(todos, function(item) {
 
 The macro inspects `Context.definedValue("mui_backend")` and transforms the call:
 
-**SUI path**: Walks the builder body AST. Replaces references to the item parameter with string templates (e.g., `item.title` becomes `{todos[_i].title}`). Converts `new Text(item)` to `Text.withState("{todos[_i]}")`. Outputs `new sui.ui.ForEach("todos", "_i", transformedView)`.
+**SUI path**: Walks the builder body AST. Replaces references to the item parameter with string templates (e.g., `item.title` becomes `{todos[_i].title}`). Converts `new Text(item)` to `Text.withState("{todos[_i]}")`. Outputs `new sui.ui.ForEach(todos, "_i", transformedView)` — sui natively accepts typed state field references.
 
 **CUI path**: Outputs `new cui.ui.ForEach(items.get(), builder)` -- the closure runs at runtime.
 
