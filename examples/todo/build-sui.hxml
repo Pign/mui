@@ -4,4 +4,4 @@
 -D mui_backend=sui
 --macro sui.macros.SwiftGenerator.register()
 -main TodoApp
--cpp build/sui
+-cpp build/cpp

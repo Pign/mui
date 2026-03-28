@@ -28,7 +28,7 @@ class Init {
 -D mui_backend=sui
 --macro sui.macros.SwiftGenerator.register()
 -main $projectName
--cpp build/sui
+-cpp build/cpp
 ');
 
         // build-wui.hxml

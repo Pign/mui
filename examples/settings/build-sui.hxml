@@ -4,4 +4,4 @@
 -D mui_backend=sui
 --macro sui.macros.SwiftGenerator.register()
 -main SettingsApp
--cpp build/sui
+-cpp build/cpp
