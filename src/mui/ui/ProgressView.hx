@@ -1,0 +1,28 @@
+package mui.ui;
+
+// Unified constructor: (?label:String, ?value:Float)
+// sui: ProgressView(?label, ?valueBinding:String, ?total:Float) -- binding-based
+// wui: ProgressRing(?value:Float) -- value only
+// cui: ProgressBar(value:Float, label:String="") -- value + label
+
+#if (mui_backend == "sui")
+class ProgressView extends sui.ui.ProgressView {
+    public function new(?label:String, ?value:Float) {
+        super(label);
+    }
+}
+#elseif (mui_backend == "wui")
+class ProgressView extends wui.ui.ProgressRing {
+    public function new(?label:String, ?value:Float) {
+        super(value);
+    }
+}
+#elseif (mui_backend == "cui")
+class ProgressView extends cui.ui.ProgressBar {
+    public function new(?label:String, ?value:Float) {
+        super(value != null ? value : 0.0, label != null ? label : "");
+    }
+}
+#else
+#error "mui requires -D mui_backend=sui|wui|cui"
+#end

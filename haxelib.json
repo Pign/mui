@@ -1,0 +1,10 @@
+{
+    "name": "mui",
+    "version": "0.1.0",
+    "description": "Multi-UI abstraction layer: write once, deploy to macOS/iOS (SwiftUI), Windows (WinUI), and terminal (TUI)",
+    "license": "MIT",
+    "classPath": "src",
+    "main": "tools.cli.CLI",
+    "dependencies": {},
+    "tags": ["ui", "cross-platform", "swiftui", "winui", "tui", "multiplatform"]
+}

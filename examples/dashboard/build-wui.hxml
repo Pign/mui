@@ -1,0 +1,6 @@
+-cp .
+-cp ../../src
+-lib wui
+-D mui_backend=wui
+-main DashboardApp
+-cpp build/wui
