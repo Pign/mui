@@ -76,7 +76,7 @@ class Build {
         sui CLI expects sui.json for app metadata.
         Create a default one if it doesn't exist.
     **/
-    static function ensureSuiJson(cwd:String):Void {
+    public static function ensureSuiJson(cwd:String):Void {
         var suiJson = '$cwd/sui.json';
         if (!sys.FileSystem.exists(suiJson)) {
             // Read -main from build-sui.hxml to derive app name
