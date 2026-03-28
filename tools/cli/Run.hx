@@ -20,45 +20,48 @@ class Run {
         // Then run
         switch (backend) {
             case "sui":
-                // sui CLI handles run (launches the macOS app or simulator)
                 var suiArgs = ["run", "sui", "run"];
                 for (a in extraArgs) suiArgs.push(a);
                 Sys.setCwd(cwd);
                 Sys.command("haxelib", suiArgs);
 
             case "wui":
-                // wui CLI handles run (launches the .exe)
                 var wuiArgs = ["run", "wui", "run"];
                 for (a in extraArgs) wuiArgs.push(a);
                 Sys.setCwd(cwd);
                 Sys.command("haxelib", wuiArgs);
 
             case "cui":
-                // Find and run the compiled binary
                 Sys.setCwd(cwd);
-                // Read mui.json or build-cui.hxml to find the binary name
-                var binDir = '$cwd/build/cui/';
-                if (sys.FileSystem.exists(binDir)) {
-                    // The hxcpp output binary is typically named after the main class
-                    for (entry in sys.FileSystem.readDirectory(binDir)) {
-                        if (!StringTools.endsWith(entry, ".hx") &&
-                            !StringTools.endsWith(entry, ".cpp") &&
-                            !StringTools.endsWith(entry, ".h") &&
-                            !StringTools.endsWith(entry, ".o") &&
-                            !sys.FileSystem.isDirectory('$binDir$entry')) {
-                            // Likely the executable
-                            Sys.println('Running $entry...');
-                            Sys.command('$binDir$entry');
-                            return;
-                        }
+                // Read -main from build-cui.hxml to find the binary name
+                var mainClass = readMainClass('$cwd/build-cui.hxml');
+                if (mainClass != null) {
+                    var bin = '$cwd/build/cui/$mainClass';
+                    if (sys.FileSystem.exists(bin)) {
+                        Sys.println('Running $mainClass...');
+                        Sys.exit(Sys.command(bin));
+                        return;
                     }
                 }
                 Sys.println("Error: could not find compiled binary in build/cui/");
+                Sys.println("Make sure build-cui.hxml has a -main entry.");
                 Sys.exit(1);
 
             default:
                 Sys.println('Unknown backend: $backend');
                 Sys.exit(1);
         }
+    }
+
+    static function readMainClass(hxmlPath:String):String {
+        if (!sys.FileSystem.exists(hxmlPath)) return null;
+        var content = sys.io.File.getContent(hxmlPath);
+        for (line in content.split("\n")) {
+            var trimmed = StringTools.trim(line);
+            if (StringTools.startsWith(trimmed, "-main ")) {
+                return StringTools.trim(trimmed.substr(6));
+            }
+        }
+        return null;
     }
 }
