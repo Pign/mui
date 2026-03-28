@@ -9,7 +9,8 @@ import mui.ui.TextInputBinding;
 #if (mui_backend == "sui")
 @:swiftView("TextField")
 class TextInput extends sui.ui.TextField {
-    public function new(placeholder:String, state:TextInputBinding) {
+    public function new(@:swiftLabel("_") placeholder:String,
+                        @:swiftLabel("text") @:swiftBinding state:TextInputBinding) {
         super(placeholder, state.unwrap());
     }
 }
