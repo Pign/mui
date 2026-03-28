@@ -14,34 +14,38 @@ class Run {
         var backend = args[0];
         var extraArgs = args.slice(1);
 
-        // Build first (runs haxe build-<backend>.hxml)
-        Build.run(cwd, args);
+        var hxmlFile = 'build-$backend.hxml';
+        if (!sys.FileSystem.exists('$cwd/$hxmlFile')) {
+            Sys.println('Error: $hxmlFile not found in $cwd');
+            Sys.exit(1);
+        }
+
+        Sys.setCwd(cwd);
 
         switch (backend) {
             case "sui":
-                // The sui CLI needs build.hxml — symlink our build-sui.hxml
-                ensureBuildHxml(cwd, backend);
+                // sui CLI handles full pipeline + launch
+                Build.ensureBuildHxml(cwd, backend);
+                Build.ensureSuiJson(cwd);
                 var suiArgs = ["run", "sui", "run"];
                 for (a in extraArgs) suiArgs.push(a);
-                Sys.setCwd(cwd);
-                Sys.command("haxelib", suiArgs);
+                Sys.exit(Sys.command("haxelib", suiArgs));
 
             case "wui":
-                ensureBuildHxml(cwd, backend);
+                Build.ensureBuildHxml(cwd, backend);
                 var wuiArgs = ["run", "wui", "run"];
                 for (a in extraArgs) wuiArgs.push(a);
-                Sys.setCwd(cwd);
-                Sys.command("haxelib", wuiArgs);
+                Sys.exit(Sys.command("haxelib", wuiArgs));
 
             case "cui":
-                Sys.setCwd(cwd);
+                // Build first, then run the binary
+                Build.run(cwd, args);
                 var mainClass = readMainClass('$cwd/build-cui.hxml');
                 if (mainClass != null) {
                     var bin = '$cwd/build/cui/$mainClass';
                     if (sys.FileSystem.exists(bin)) {
                         Sys.println('Running $mainClass...');
                         Sys.exit(Sys.command(bin));
-                        return;
                     }
                 }
                 Sys.println("Error: could not find compiled binary in build/cui/");
@@ -50,17 +54,6 @@ class Run {
             default:
                 Sys.println('Unknown backend: $backend');
                 Sys.exit(1);
-        }
-    }
-
-    /**
-        The backend CLIs (sui, wui) expect a build.hxml in the project root.
-        Create one that includes our build-<backend>.hxml if it doesn't exist.
-    **/
-    static function ensureBuildHxml(cwd:String, backend:String):Void {
-        var buildHxml = '$cwd/build.hxml';
-        if (!sys.FileSystem.exists(buildHxml)) {
-            sys.io.File.saveContent(buildHxml, 'build-$backend.hxml\n');
         }
     }
 
