@@ -63,6 +63,21 @@ new VStack([
 
 Maps to SwiftUI `Divider`, a styled `Border` on WinUI, `HorizontalDivider` on Compose, and a terminal line on cui.
 
+## ZStack
+
+Overlay stack — children are layered on top of each other.
+
+```haxe
+new ZStack([
+    new Image("background"),
+    new Text("Overlay text"),
+])
+```
+
+**Constructor**: `ZStack(content:Array<View>)`
+
+Maps to SwiftUI `ZStack`, WinUI/Compose `Box`. On cui, falls back to a vertical stack (terminal can't overlay views).
+
 ## SafeArea
 
 Wraps content to respect platform safe areas (notch, status bar, home indicator).

@@ -16,6 +16,9 @@ mui provides unified UI components that work across all backends. Each component
 | [Spacer](ui/layout.md) | `Spacer()` | Spacer | Spacer | Spacer | Spacer |
 | [Divider](ui/layout.md) | `Divider()` | Divider | Border | HorizontalDivider | Divider |
 | [ProgressView](ui/controls.md) | `ProgressView(?label, ?value)` | ProgressView | ProgressRing | ProgressView | ProgressBar |
+| [Slider](ui/controls.md) | `Slider(state, min, max)` | Slider | Slider | Slider | TUI bar |
+| [ZStack](ui/layout.md) | `ZStack(children)` | ZStack | ZStack | Box | VStack fallback |
+| [ConditionalView](ui/controls.md) | `ConditionalView(state, then, ?else)` | ConditionalView | ConditionalView | ConditionalView | runtime |
 | [SafeArea](ui/layout.md) | `SafeArea(children)` | no-op | no-op | safeDrawingPadding | no-op |
 | [Image](ui/controls.md) | `Image(source)` | Image | Image | Image | N/A |
 

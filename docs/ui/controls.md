@@ -32,6 +32,39 @@ Accepts a `@:state Bool` field directly. The `ToggleBinding` abstract handles ba
 - **wui**: passes the State object as a Dynamic binding
 - **cui**: creates a `CheckboxBinding` from the `BoolState`
 
+## Slider
+
+A range slider for Float values.
+
+```haxe
+@:state var volume:Float = 0.5;
+
+new Slider(volume, 0.0, 1.0)
+```
+
+**Constructor**: `Slider(state:SliderBinding, min:Float = 0.0, max:Float = 1.0)`
+
+Accepts a `@:state Float` field directly. The `SliderBinding` abstract handles backend conversion via `@:from`.
+
+On cui, renders as a horizontal bar (`████████░░░░░░░░  50%`) with Left/Right arrow key control.
+
+## ConditionalView
+
+Shows one view or another based on a Bool state.
+
+```haxe
+@:state var isLoggedIn:Bool = false;
+
+new ConditionalView(isLoggedIn,
+    new Text("Welcome!"),
+    new Text("Please log in")
+)
+```
+
+**Constructor**: `ConditionalView(condition:State<Bool>, thenView:View, ?elseView:View)`
+
+Native on sui/wui/aui. On cui, implemented at runtime with measure/render delegation based on the state value.
+
 ## ProgressView
 
 A progress indicator.
