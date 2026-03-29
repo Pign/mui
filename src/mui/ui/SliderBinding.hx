@@ -34,14 +34,19 @@ abstract SliderBinding(aui.state.State<Float>) {
     public inline function unwrap():aui.state.State<Float> return this;
 }
 #elseif (mui_backend == "cui")
-// cui has no Slider — binding provided for API compatibility
-abstract SliderBinding(cui.state.Binding<Float>) {
-    public inline function new(v:cui.state.Binding<Float>) this = v;
+abstract SliderBinding(cui.ui.Slider.SliderBinding) {
+    public inline function new(v:cui.ui.Slider.SliderBinding) this = v;
+
+    @:from static inline function fromFloatState(s:cui.state.State.FloatState):SliderBinding
+        return new SliderBinding(cui.ui.Slider.SliderBinding.fromState(s));
 
     @:from static inline function fromState(s:cui.state.State<Float>):SliderBinding
-        return new SliderBinding(cui.state.Binding.from(s));
+        return new SliderBinding(new cui.ui.Slider.SliderBinding(
+            () -> s.get(),
+            (v) -> s.set(v)
+        ));
 
-    public inline function unwrap():cui.state.Binding<Float> return this;
+    public inline function unwrap():cui.ui.Slider.SliderBinding return this;
 }
 #else
 #error "mui requires -D mui_backend=sui|wui|cui|aui"
