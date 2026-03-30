@@ -37,10 +37,19 @@ class Watch {
 
         Sys.setCwd(cwd);
 
-        if (backend == "cui") {
-            watchCppia(cwd, hxmlFile, sourceDirs, mtimes);
-        } else {
-            watchWarm(cwd, backend, sourceDirs, mtimes);
+        switch (backend) {
+            case "cui":
+                // CPPIA: recompile .cppia script only (<1s), restart process
+                watchCppia(cwd, hxmlFile, sourceDirs, mtimes);
+            case "sui" | "aui":
+                // CPPIA + dynamic renderer: recompile .cppia (<1s),
+                // host stays running and re-renders view tree
+                // For now, falls back to warm reload until CPPIA host mode
+                // is fully integrated in the backend CLIs.
+                watchCppiaWithHost(cwd, backend, hxmlFile, sourceDirs, mtimes);
+            default:
+                // Warm reload: full rebuild + restart
+                watchWarm(cwd, backend, sourceDirs, mtimes);
         }
     }
 
@@ -93,7 +102,38 @@ class Watch {
     }
 
     /**
-        Warm reload loop for sui/wui/aui.
+        CPPIA with dynamic renderer for sui/aui.
+        First build: full pipeline (builds host with dynamic renderer).
+        Subsequent: recompile .cppia only, host detects change and re-renders.
+
+        Until CPPIA host mode is integrated into backend CLIs, this falls
+        back to warm reload but uses CPPIA for the Haxe compilation step.
+    **/
+    static function watchCppiaWithHost(cwd:String, backend:String, hxmlFile:String, sourceDirs:Array<String>, mtimes:Map<String, Float>) {
+        // Phase 1: Do initial full build via backend CLI
+        Sys.println('[watch] Initial build for $backend (first time only)...');
+        Build.run(cwd, [backend]);
+
+        // Phase 2: Recompile as CPPIA on each change
+        cppiaScript = '$cwd/build/watch.cppia';
+        Sys.println("[watch] Switching to CPPIA mode for fast reloads...");
+
+        if (!compileCppia(cwd, hxmlFile)) {
+            Sys.println("[watch] CPPIA compilation failed. Falling back to warm reload.");
+            watchWarm(cwd, backend, sourceDirs, mtimes);
+            return;
+        }
+
+        Sys.println("[watch] Ready. Watching for changes...");
+
+        // For now, fall back to warm reload loop since the backend hosts
+        // don't yet support CPPIA VM embedding. Once sui/aui PRs #56/#3
+        // are integrated, this will use the CPPIA host directly.
+        watchWarm(cwd, backend, sourceDirs, mtimes);
+    }
+
+    /**
+        Warm reload loop for wui (and fallback for sui/aui).
         Full rebuild + restart on each change.
     **/
     static function watchWarm(cwd:String, backend:String, sourceDirs:Array<String>, mtimes:Map<String, Float>) {
