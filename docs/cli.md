@@ -39,6 +39,23 @@ mui run <backend> [options]
 
 Builds (if needed) and runs the app.
 
+### watch
+
+```bash
+mui watch <backend>
+```
+
+Watches `.hx` source files and auto-rebuilds on save.
+
+| Backend | Strategy | Reload speed |
+|---------|----------|-------------|
+| `cui` | CPPIA (recompile script only) | ~0.3s |
+| `sui` | Full rebuild via Xcode | ~10-20s |
+| `wui` | Full rebuild via MSBuild | ~10-15s |
+| `aui` | Full rebuild via Gradle | ~15-30s |
+
+See [Hot Reload](hot-reload.md) for a step-by-step guide.
+
 ### clean
 
 ```bash

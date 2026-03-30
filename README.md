@@ -171,8 +171,9 @@ view.border(cui.render.BorderStyle.Rounded);
 
 ```
 mui init [name]       Scaffold a new project
-mui build <backend>   Build (sui, wui, or cui)
-mui run <backend>     Build and run
+mui build <backend>   Build for production
+mui run <backend>     Build and run once
+mui watch <backend>   Hot reload (CPPIA for cui ~0.3s, warm for others)
 mui clean             Remove build artifacts
 mui version           Show version
 ```

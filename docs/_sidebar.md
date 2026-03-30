@@ -11,6 +11,7 @@
   - [Overview](state/README.md)
   - [Bindings](state/bindings.md)
 - [Enums](enums.md)
+- [Hot Reload](hot-reload.md)
 - [CLI Reference](cli.md)
 - [Adding a Backend](adding-a-backend.md)
 - **Examples**
