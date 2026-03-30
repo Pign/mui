@@ -32,6 +32,8 @@ class CLI {
                 Build.run(cwd, commandArgs);
             case "run":
                 Run.run(cwd, commandArgs);
+            case "watch":
+                Watch.run(cwd, commandArgs);
             case "clean":
                 clean(cwd);
             case "help" | "--help" | "-h":
@@ -64,6 +66,7 @@ Commands:
   init [name]          Scaffold a new mui project
   build <backend>      Build for a specific backend
   run <backend>        Build and run
+  watch <backend>      Hot reload (CPPIA for cui, warm for others)
   clean                Remove build artifacts
   help                 Show this help message
   version              Show version
