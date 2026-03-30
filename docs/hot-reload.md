@@ -56,7 +56,7 @@ When you change a file, only the `.cppia` script is recompiled — no C++ compil
 
 This is why cui hot reload is so fast: a full hxcpp C++ build takes ~30s, but a CPPIA script recompile takes **0.3s** — a 100x speedup.
 
-### sui / aui: Dynamic renderer + warm reload
+### sui / aui: Dynamic renderer
 
 For GUI backends, the first build uses `--watch` mode which includes a **dynamic view renderer** in the host app:
 
