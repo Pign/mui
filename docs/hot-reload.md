@@ -82,23 +82,26 @@ WinUI uses standard warm reload — full rebuild + restart via MSBuild on each c
 
 ## Architecture
 
-```
-┌──────────────────────────────────────┐
-│     Native Host App (built once)     │
-│                                      │
-│  ┌──────────────┐  ┌──────────────┐  │
-│  │ Dynamic       │←─│  ViewNode    │  │
-│  │ Renderer      │  │  Bridge     │  │
-│  │ (SwiftUI /    │  │  (C funcs)   │  │
-│  │  Compose)     │  │              │  │
-│  └──────────────┘  └──────┬───────┘  │
-│                           │          │
-│  ┌────────────────────────┴────────┐ │
-│  │     Haxe View Tree (runtime)    │ │
-│  │     body() → VStack, Text, ...  │ │
-│  └─────────────────────────────────┘ │
-└──────────────────────────────────────┘
-         ↑ rebuilt on each .hx change
+```mermaid
+graph TB
+    subgraph Host["Native Host App (built once)"]
+        DR["Dynamic Renderer<br/>(SwiftUI / Compose)"]
+        VB["ViewNode Bridge<br/>(C functions)"]
+        HX["Haxe View Tree<br/>body() → VStack, Text, ..."]
+        VB -->|reads tree| DR
+        HX -->|exposes nodes| VB
+    end
+    FS["File Watcher<br/>polls .hx sources"] -->|".hx changed"| RC["Recompile<br/>(.cppia or haxe)"]
+    RC -->|"new view tree"| HX
+    DR -->|"renders native UI"| UI["SwiftUI / Compose / WinUI"]
+
+    style Host fill:#1a1a2e,stroke:#7C3AED,color:#e8e8f0
+    style DR fill:#312e81,stroke:#A78BFA,color:#e8e8f0
+    style VB fill:#312e81,stroke:#A78BFA,color:#e8e8f0
+    style HX fill:#312e81,stroke:#A78BFA,color:#e8e8f0
+    style FS fill:#1e1e2e,stroke:#34D399,color:#e8e8f0
+    style RC fill:#1e1e2e,stroke:#34D399,color:#e8e8f0
+    style UI fill:#1e1e2e,stroke:#60A5FA,color:#e8e8f0
 ```
 
 The dynamic renderer (`DynamicView.swift` on sui, `DynamicComposable.kt` on aui) interprets the Haxe view tree at runtime:
