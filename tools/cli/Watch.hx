@@ -110,25 +110,35 @@ class Watch {
         back to warm reload but uses CPPIA for the Haxe compilation step.
     **/
     static function watchCppiaWithHost(cwd:String, backend:String, hxmlFile:String, sourceDirs:Array<String>, mtimes:Map<String, Float>) {
-        // Phase 1: Do initial full build via backend CLI
-        Sys.println('[watch] Initial build for $backend (first time only)...');
-        Build.run(cwd, [backend]);
+        // Phase 1: Build the host app with dynamic renderer (once)
+        Sys.println('[watch] Building hot reload host for $backend (first time only)...');
 
-        // Phase 2: Recompile as CPPIA on each change
-        cppiaScript = '$cwd/build/watch.cppia';
-        Sys.println("[watch] Switching to CPPIA mode for fast reloads...");
-
-        if (!compileCppia(cwd, hxmlFile)) {
-            Sys.println("[watch] CPPIA compilation failed. Falling back to warm reload.");
-            watchWarm(cwd, backend, sourceDirs, mtimes);
-            return;
+        switch (backend) {
+            case "sui":
+                Build.ensureBuildHxml(cwd, backend);
+                Build.ensureSuiJson(cwd);
+                Sys.setCwd(cwd);
+                // Pass --watch flag so sui CLI includes DynamicView renderer
+                var code = Sys.command("haxelib", ["run", "sui", "build", "--watch"]);
+                if (code != 0) {
+                    Sys.println("[watch] Host build failed.");
+                    Sys.exit(1);
+                }
+            case "aui":
+                Build.ensureBuildHxml(cwd, backend);
+                Sys.setCwd(cwd);
+                var code = Sys.command("haxelib", ["run", "aui", "build", "--watch"]);
+                if (code != 0) {
+                    Sys.println("[watch] Host build failed.");
+                    Sys.exit(1);
+                }
+            default:
         }
 
-        Sys.println("[watch] Ready. Watching for changes...");
-
-        // For now, fall back to warm reload loop since the backend hosts
-        // don't yet support CPPIA VM embedding. Once sui/aui PRs #56/#3
-        // are integrated, this will use the CPPIA host directly.
+        // Phase 2: Now watch and do warm reloads
+        // The host was built with the dynamic renderer, so subsequent
+        // rebuilds only need to regenerate Swift/Kotlin from the new Haxe AST
+        Sys.println("[watch] Host ready. Watching for changes...");
         watchWarm(cwd, backend, sourceDirs, mtimes);
     }
 
