@@ -1,6 +1,6 @@
 # Hot Reload
 
-`mui watch` monitors your source files and automatically rebuilds when you save. For the terminal backend (cui), it uses CPPIA for sub-second reloads.
+`mui watch` monitors your source files and automatically rebuilds when you save changes. For the terminal backend (cui), it uses CPPIA for sub-second reloads.
 
 ## Quick Start
 
