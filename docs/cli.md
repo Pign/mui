@@ -49,12 +49,14 @@ Watches `.hx` source files and auto-rebuilds on save.
 
 | Backend | Strategy | Reload speed |
 |---------|----------|-------------|
-| `cui` | CPPIA (recompile script only) | ~0.3s |
-| `sui` | Full rebuild via Xcode | ~10-20s |
-| `wui` | Full rebuild via MSBuild | ~10-15s |
-| `aui` | Full rebuild via Gradle | ~15-30s |
+| `cui` | CPPIA script recompile | ~0.3s |
+| `sui` | Dynamic renderer + Xcode incremental | ~10-20s |
+| `aui` | Dynamic renderer + Gradle incremental | ~15-30s |
+| `wui` | Full warm rebuild via MSBuild | ~10-15s |
 
-See [Hot Reload](hot-reload.md) for a step-by-step guide.
+The first build for sui/aui includes a dynamic view renderer (`--watch` flag) so the native host can interpret the Haxe view tree at runtime. Subsequent rebuilds only recompile the Haxe side.
+
+See [Hot Reload](hot-reload.md) for a step-by-step guide and architecture details.
 
 ### clean
 
