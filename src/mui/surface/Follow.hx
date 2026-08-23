@@ -1,9 +1,6 @@
 package mui.surface;
 
 import mui.surface.SurfaceDecl;
-import nui.Snapshot;
-import nui.Snapshot.ActionTable;
-import rui.Signal.Effect;
 
 /**
 	A snapshot surface following its own state.
@@ -55,19 +52,16 @@ import rui.Signal.Effect;
 **/
 class Follow {
 	/**
-		Follow `decl`, handing each fresh snapshot to `publish`.
+		Follow `decl`, handing each fresh snapshot to `publish` as JSON.
 
-		The effect evaluates the declaration's thunk; `rui` records every cell
-		that thunk read; a write to any of them re-runs it. Dependencies are
-		recaptured on each run, so a declaration whose branches read different
-		cells is followed correctly with nothing special.
+		A thin adapter over `nui.Follow`, which owns the mechanism because what
+		is followed is a tree of `nui.Node` and what comes out is a `Snapshot`.
+		What this layer adds is the surface model's own two things: pulling the
+		content thunk out of a `SurfaceDecl`, and turning a `mui.View` into a
+		`nui.Node` through the register each backend signs.
 
-		`publishFirst` decides whether the run that starts it all also
-		publishes. **An application seeding a widget at launch says yes; a
-		process that woke up to service a tap says no** — what it would publish
-		is its own state from before the tap, which on a two-process host
-		overwrites the picture the application put there. That question is
-		asked here so that it is asked once.
+		Returns `null` for a declaration that carries no tree — a command set
+		has no picture to keep current.
 	**/
 	public static function surface(decl:SurfaceDecl, publish:String->Void, publishFirst:Bool = true):Null<Follower> {
 		var content = switch (decl) {
@@ -75,89 +69,59 @@ class Follow {
 			case _: null;
 		}
 		if (content == null) return null;
-		return new Follower(content, publish, publishFirst);
+
+		return new Follower(nui.Follow.tree(
+			() -> {
+				var describe = Describe.impl;
+				if (describe == null) {
+					// The backend signs this register in its `mui.App`
+					// constructor, so a null here means the surface is being
+					// followed before the application exists. An empty group
+					// rather than a crash inside the effect: the far side draws
+					// nothing, which is degradation, and the word above says why.
+					trace("mui.surface.Follow: no describer installed; the surface cannot be sampled");
+					return new nui.Node("VStack");
+				}
+				return describe(content());
+			},
+			snap -> publish(haxe.Json.stringify(snap)),
+			publishFirst
+		));
 	}
 }
 
 /**
-	One followed surface: its effect, its action table, and its lifetime.
+	A followed surface, seen by a backend.
 
-	Held by whoever started it, and disposed when that owner goes — an effect
-	still watching an application that left the screen is the shape of every
-	rotation bug this ecosystem has had.
+	Thin on purpose: it holds a `nui.Follow.Follower` and differs from it in
+	one respect, which is the reason it exists rather than being a typedef.
+	`nui` deals in `SnapshotNode`, because a snapshot is what its projection
+	produces and `nui` has no opinion about where it goes. A **surface**
+	crosses a boundary — a process, a container, a wire — and what crosses is
+	JSON. So the picture is a `String` at this level, both on the way out
+	through `publish` and here on demand, and no backend writes that
+	conversion twice.
 **/
 class Follower {
-	/**
-		The table is kept across samples and **never cleared between them**.
+	final inner:nui.Follow.Follower;
 
-		`Snapshot.project` keys ids by PLACE, so the button in the same slot
-		keeps its id from one generation to the next, and a tap that raced the
-		state beat invokes the CURRENT closure rather than a hole. Clearing
-		here is exactly how the first interactive Companion turned every Enter
-		into a stale remote tap. Only controls that left the tree retire, which
-		`project` does itself through `beginGeneration`/`sweep`.
-	**/
-	final table:ActionTable = new ActionTable();
-
-	final content:() -> mui.View;
-	final publish:String->Void;
-
-	var effect:Null<Effect>;
-	var seeding:Bool;
-
-	public function new(content:() -> mui.View, publish:String->Void, publishFirst:Bool) {
-		this.content = content;
-		this.publish = publish;
-		this.seeding = !publishFirst;
-		this.effect = new Effect(run);
+	public function new(inner:nui.Follow.Follower) {
+		this.inner = inner;
 	}
 
-	function run():Void {
-		var describe = Describe.impl;
-		if (describe == null) {
-			// The backend signs this register in its `mui.App` constructor, so
-			// a null here means the surface is being followed before the
-			// application exists. Said, not swallowed.
-			trace("mui.surface.Follow: no describer installed; the surface cannot be sampled");
-			return;
-		}
-		var json = haxe.Json.stringify(Snapshot.project(describe(content()), table));
-		if (seeding) {
-			seeding = false;
-			return;
-		}
-		publish(json);
+	/** The picture right now, without waiting for a write. For a host that
+		pulls — Android's widget asks rather than being handed. **/
+	public function sampleNow():String {
+		return haxe.Json.stringify(inner.sampleNow());
 	}
 
-	/**
-		Take a sample without waiting for a change.
-
-		For a host that **pulls**: Android asks for the picture when it decides
-		to draw, and what it gets must be current. Reading it here rather than
-		re-running the effect keeps the effect's dependency set alone — a pull
-		is not a change.
-	**/
-	public function sampleNow():Null<String> {
-		var describe = Describe.impl;
-		if (describe == null) return null;
-		return haxe.Json.stringify(Snapshot.project(describe(content()), table));
-	}
-
-	/**
-		Run what a tap names.
-
-		An id the table has retired is answered with a word rather than a
-		crash: it may legitimately name a control that left the tree between
-		the picture the host kept and the user's finger.
-	**/
+	/** Run what a tap names, against the table this follower filled. **/
 	public function invoke(id:Int, ?arg:String):Void {
-		table.invoke(id, arg);
+		inner.invoke(id, arg);
 	}
 
-	/** Stop following. Idempotent. **/
+	/** Stop following, and release what the effect held. **/
 	public function dispose():Void {
-		var e = effect;
-		effect = null;
-		if (e != null) e.dispose();
+		inner.dispose();
 	}
 }
