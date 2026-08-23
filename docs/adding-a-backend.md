@@ -35,28 +35,30 @@ in your `App` constructor — that is what a projection needs. It states a
 capability, not an appetite: the networked corner stays off in any build that
 has not set `-D mui_cafos`.
 
-### Answering a resample request
+### Following a snapshot surface
 
-If any role you host is a **snapshot** one — sampled by the system rather
-than reconciled by an effect — install `mui.surface.Resample.impl` beside
-your describer:
+If any role you host is a **snapshot** one — sampled by the system rather than
+reconciled by an effect — follow each declaration you host, once the
+application instance is whole, and say what to do with the picture:
 
 ```haxe
-mui.surface.Resample.impl = (role, id) -> {
-    if (role == mui.surface.SurfaceRole.Glance) yourHost.retake(id);
-};
+follower = mui.surface.Follow.surface(decl, json -> yourHost.show(json));
 ```
 
-That is how an application says "the picture is worth retaking", and without
-it the call reaches nothing and says so — the warning names you, because the
-hole is yours. `id` is set when the application meant one surface among
-several of that role, and a host that mounts only one may ignore it.
+Everything reactive is inside: the effect that subscribes the surface to the
+cells its thunk read, the action table that survives re-projections so a late
+tap still resolves, and whether the first run publishes. The `Follower` you
+get back answers `sampleNow()` for a host that pulls, `invoke(id, arg)` for a
+tap coming back, and `dispose()` to stop.
 
-**A backend hosting the role live installs an empty one, deliberately.** Its
-picture was never stale, so there is nothing to retake; the empty
-implementation is what separates "already satisfied" from "forgot", and only
-you can tell those apart. `qui` does this for its cover — read it, it is
-three lines and a comment.
+Not in the constructor: the subclass has not initialised its `@:state` fields
+yet, and the declaration's thunk would read a null cell and take the boot down
+with it. Remember the application there, follow it once it is whole.
+
+**A backend hosting the role live follows nothing, deliberately** — and says
+so in a comment, because the difference between "already satisfied" and
+"forgot" is one only you can tell. Its picture was never stale: the surface is
+an effect that both decides and draws. `qui` does this for its cover.
 
 See mui's [Surfaces](surfaces.md) page for what the application side looks
 like, including why the call compiles to nothing on a backend that hosts no

@@ -141,6 +141,14 @@ serve that a cell does not.
 `NuiProjector` samples inside an effect and re-projects on a write. Glance was
 the one snapshot corner still asking to be reminded.
 
+The register outlived the macro by a few days. `Resample.impl` was meant to
+stay — the backend's own sampler, called by the effect instead of by the
+application — but once each follower took a callback saying what to do with
+its picture, nothing ever called it: three backends signed a hook with no
+caller, and one of them signed an empty one to silence a warning that could
+no longer fire. A per-surface callback is better typed than a register keyed
+by role and id, so the module is gone as well.
+
 ### What still needs saying out loud
 
 A surface whose content depends on something no cell can see — a clock ticking
@@ -152,30 +160,45 @@ view, applied to the one corner that had an exemption.
 ### Naming one surface among several
 
 A role can be declared more than once — several widgets, several covers — and
-each follows its own state independently: a write to a cell only `today()` reads
-re-samples `today` and nothing else. The id you gave the declaration is what
-reaches `Resample.impl`, so a backend that mounts several can refresh the one
-that changed.
-
-A host that mounts a single surface of the role ignores the id, since it already
-picked its declaration by the rule its cardinality states.
+each follows its own state independently: a write to a cell only `today()`
+reads re-samples `today` and nothing else. That falls out of the mechanism
+rather than being arranged: one follower per declaration, one effect per
+follower, and `rui` subscribes each effect to exactly the cells its own thunk
+read.
 
 ### Implementing it, as a backend
 
-`Resample.impl` is a register the backend signs at construction, the same
-shape as `mui.surface.Describe.impl`: shared code calls the hook, never a
-backend.
+Follow each snapshot declaration you host, and say what to do with the picture:
 
 ```haxe
 class App extends yourbackend.App {
     public function new() {
         super();
-        mui.surface.Resample.impl = (role, id) -> {
-            if (role == mui.surface.SurfaceRole.Glance) yourHost.retake(id);
-        };
+        mui.surface.Describe.impl = v -> yourbackend.nui.Describe.describe(v);
+    }
+
+    // ...once the instance is whole — never in the constructor, where the
+    // subclass has not initialised its @:state fields and the thunk would
+    // read a null cell:
+    function startFollowing() {
+        var decl = pickGlance(surfaces());
+        if (decl != null)
+            follower = mui.surface.Follow.surface(decl, json -> yourHost.show(json));
     }
 }
 ```
+
+`Follow.surface` returns a `Follower` — `sampleNow()` for a host that pulls,
+`invoke(id, arg)` for a tap coming back, `dispose()` to stop. The effect, the
+action table, and the question of whether the first run publishes are decided
+inside it, once for every backend; see [nui's snapshot
+contract](https://lapavoiserie.github.io/nui/#/snapshot) for what those three answers are.
+
+The callback is the whole of a backend's freedom here, and the three that
+exist use it differently: `aui` throws the JSON away and nudges its host to
+pull for itself, because Android's widget asks rather than being handed;
+`cafos` wraps it in a generation number and sends it over a socket; `sui`
+writes it into the App Group container a separate binary reads.
 
 Two shapes are worth copying rather than inventing:
 
@@ -186,9 +209,11 @@ Two shapes are worth copying rather than inventing:
   and the widget class, which vary — and registers itself with that object
   when the process boots. Every entry point that can start the process
   registers, since any of them may be the one that did.
-- **A live host answers with nothing, on purpose**, and says so in a comment.
-  The empty implementation is what separates "already satisfied" from
-  "forgot to implement", and only the backend can tell those apart.
+- **A live host follows nothing, on purpose**, and says so in a comment.
+  `qui` mounts the Sailfish cover as an effect over the signal graph: the
+  picture was never stale, so there is no snapshot to keep current. That is a
+  difference of kind, not a hole — and the only one who can tell those apart
+  is the backend.
 
 ## What a detached surface reaches
 

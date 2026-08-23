@@ -9,7 +9,7 @@ import haxe.macro.Expr;
 	know that native capabilities exist; `kui-store` is a capability and must
 	not depend on the reactive core, which is the layering `kui` exists to
 	protect. `mui` is where a backend's pieces are already named — it holds the
-	`Describe` and `Resample` registers for the same reason — so it holds this.
+	`Describe` register for the same reason — so it holds this.
 
 	One call, once, before any durable cell is constructed:
 
