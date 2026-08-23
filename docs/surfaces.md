@@ -101,59 +101,64 @@ override function surfaces():Array<SurfaceDecl> {
 
 `mui.Contract` requires `surfaces` of every backend, next to `lifetime`.
 
-## Asking for a new sample
+## Following, rather than being told
 
-A live surface needs nothing: it is an effect, and it reconciles when the
-state it read changes. A **snapshot** surface is the other half of the model
-— the system samples it when it decides, which on a home screen means "when
-it bound the widget, and then never again on its own". Something has to say
-*now*, and only the application knows when its content became worth showing:
+A live surface needs nothing: it is an effect, and it reconciles when the state
+it read changes. **A snapshot surface is the same, and used not to be.**
+
+The system samples it when it decides — on a home screen, "when it bound the
+widget, and then never again on its own" — so something has to say *now*. That
+something is the surface's own effect: the declaration is evaluated inside one,
+`rui` records every cell the thunk read, and a write to any of them re-samples
+and republishes. You write no call:
 
 ```haxe
-count.set(count.get() + 1);
-mui.surface.Resample.request(Glance);   // the widget is worth redrawing
+new Button("-", function() count.set(count.get() - 1)),   // the widget follows
 ```
 
-Every host answers that under a different name — Android pushes a fresh
-picture into the widget's state, WidgetKit calls `reloadTimelines`, a
-self-drawn painter repaints — and the application says the same sentence to
-all of them.
+Every host answers that under a different name — Android pushes a fresh picture
+into the widget's state, WidgetKit calls `reloadTimelines`, a self-drawn painter
+repaints — and none of them is the application's business.
 
-**It compiles to nothing where the backend hosts no such surface.** `request`
-is a macro, and the roles a backend hosts are knowable (`@:hostedRoles`), so
-a terminal build drops the call entirely. That is a no-op, not a silence: the
-declaration itself could not have compiled here without `optional`, which is
-where the application accepted, in its own source, that the surface flies
-nowhere on this target. Refreshing what flies nowhere is nothing by
-construction.
+### Why there used to be a call, and why it is gone
 
-Where the role *is* hosted, the call is real, and there are exactly three
-things that can happen — worth knowing, because two of them look like
-silence and only one is a bug:
+`mui.surface.Resample.request(Glance)` was a macro an application called after
+changing state. A snapshot surface has no host reactivity — there is no SwiftUI
+and no Compose on our side of a widget's boundary to hand a value to — and
+lacking a reactive host, the only thing left that could say *now* was the
+developer.
 
-| The backend… | A request does | Why |
-|---|---|---|
-| hosts the role as a **snapshot** | takes a new sample | what the call is for |
-| hosts the role **live** | nothing, deliberately | the picture was never stale; the request is already satisfied |
-| hosts the role but installed **no resampler** | nothing, with a word | a hole, and it belongs to the backend |
-| does not host the role | nothing — *the call is not compiled* | the declaration needed `optional` here; see above |
+That is a guarantee which depends on remembering, which is not a guarantee. The
+`Counter` example proved it: `+` called `request`, `-` did not, and subtracting
+left the widget showing a number nobody had. Nothing said so.
 
-`qui` is the live row: its cover is an effect over the signal graph, so it
-installs an empty resampler on purpose rather than leave the warning to fire
-on a difference of kind.
+The framework knows when the content changed: it is what the thunk read. And
+`rui.macros.ViewRule` already **refuses** a declaration that reads anything but
+an immutable or an observable, so there was never anything a manual call could
+serve that a cell does not.
+
+`cafos` had been doing it this way for the Companion surface all along —
+`NuiProjector` samples inside an effect and re-projects on a write. Glance was
+the one snapshot corner still asking to be reminded.
+
+### What still needs saying out loud
+
+A surface whose content depends on something no cell can see — a clock ticking
+on its own, a file changed underneath you — has nothing to follow. Give it a
+cell: an `@:state` the timer writes is observable, and the surface follows it
+like anything else. That is the discipline `ViewRule` already imposes on every
+view, applied to the one corner that had an exemption.
 
 ### Naming one surface among several
 
-A role can be declared more than once — several widgets, several covers —
-and `request` takes the surface's id when you mean one of them:
+A role can be declared more than once — several widgets, several covers — and
+each follows its own state independently: a write to a cell only `today()` reads
+re-samples `today` and nothing else. The id you gave the declaration is what
+reaches `Resample.impl`, so a backend that mounts several can refresh the one
+that changed.
 
-```haxe
-mui.surface.Resample.request(Glance);            // all of them
-mui.surface.Resample.request(Glance, "today");   // the one with that id
-```
-
-A host that mounts a single surface of the role ignores the id, since it
-already picked its declaration by the rule its cardinality states.
+A host that mounts a single surface of the role ignores the id, since it already
+picked its declaration by the rule its cardinality states.
 
 ### Implementing it, as a backend
 
