@@ -64,29 +64,45 @@ class Follow {
 		has no picture to keep current.
 	**/
 	public static function surface(decl:SurfaceDecl, publish:String->Void, publishFirst:Bool = true):Null<Follower> {
+		var content = nodesOf(decl);
+		if (content == null) return null;
+
+		return new Follower(nui.Follow.tree(content, snap -> publish(haxe.Json.stringify(snap)), publishFirst));
+	}
+
+	/**
+		A declaration, as a thunk producing `nui` nodes.
+
+		The surface model's own contribution, and the only part of following
+		that is genuinely mui's: pulling the content thunk out of a
+		`SurfaceDecl`, and running it through the describer each backend signs.
+		Whoever wants the nodes for something other than publishing a snapshot
+		-- carrying them to another machine, say -- needs exactly this and
+		nothing else from here.
+
+		`null` for a declaration that carries no tree: a command set has no
+		picture.
+	**/
+	public static function nodesOf(decl:SurfaceDecl):Null<() -> nui.Node> {
 		var content = switch (decl) {
 			case Tree(_, _, c): c;
 			case _: null;
 		}
 		if (content == null) return null;
 
-		return new Follower(nui.Follow.tree(
-			() -> {
-				var describe = Describe.impl;
-				if (describe == null) {
-					// The backend signs this register in its `mui.App`
-					// constructor, so a null here means the surface is being
-					// followed before the application exists. An empty group
-					// rather than a crash inside the effect: the far side draws
-					// nothing, which is degradation, and the word above says why.
-					trace("mui.surface.Follow: no describer installed; the surface cannot be sampled");
-					return new nui.Node("VStack");
-				}
-				return describe(content());
-			},
-			snap -> publish(haxe.Json.stringify(snap)),
-			publishFirst
-		));
+		return () -> {
+			var describe = Describe.impl;
+			if (describe == null) {
+				// The backend signs this register in its `mui.App` constructor,
+				// so a null here means the surface is being used before the
+				// application exists. An empty group rather than a crash inside
+				// an effect: the far side draws nothing, which is degradation,
+				// and the word above says why.
+				trace("mui.surface.Follow: no describer installed; the surface cannot be sampled");
+				return new nui.Node("VStack");
+			}
+			return describe(content());
+		};
 	}
 }
 

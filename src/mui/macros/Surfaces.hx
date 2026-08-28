@@ -219,8 +219,9 @@ class Surfaces {
 		a way to let their surfaces live on other machines — and the second
 		must never arrive by default with the first. Off, a `Companion`
 		declaration does not compile; on, it does, and the application still
-		has to call `cafos.mui.CompanionServe.serve` before anything reaches
-		the network. Two deliberate acts, neither of them a default.
+		has to call `dui.mui.CompanionServe.serve` before anything reaches the
+		network — and even then a surface goes only where somebody paired it.
+		Three deliberate acts, none of them a default.
 	**/
 	public static inline var CAFOS_DEFINE = "mui_cafos";
 
