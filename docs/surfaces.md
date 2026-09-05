@@ -17,7 +17,7 @@ actually has, and a role the backend being built has no host for is a
 > | `Preferences` | macOS: the Settings scene (⌘,), a second live root |
 > | `Commands` | macOS: the menu bar (with derived shortcuts); terminal: key bindings; Windows: the MenuBar, injected as ordinary nodes |
 > | `Auxiliary` | Windows and macOS: real extra windows, one per declaration, each with its own lifetime |
-> | `Companion` | any machine on the CAFOS network, when the build asks for it (`-D mui_cafos`) — see below |
+> | `Companion` | another machine, or a paired watch, when the build asks for it (`-D mui_carry`) — see below |
 > | `Notification` | not yet — waits for the detached subsystem |
 >
 > A role with no host on the backend being built stops that build, naming
@@ -246,24 +246,32 @@ write the same key at once are on [Durable state](state/durable.md).
 
 ## Companion: a surface on another machine
 
-**Off unless the build asks.** A Companion is served to machines this one has
-merely met, and nothing about writing an application implies wanting that, so
-the networked corner is opt-in: without `-D mui_cafos` the declaration below
-does not compile, and the refusal says why. Turning it on is one line in the
-build file, where it is reviewable — and it still takes the explicit
-`CompanionServe.serve` call before anything reaches the network. Two
-deliberate acts, neither of them a default.
+**Off unless the build asks.** A Companion leaves this device — to a machine
+merely met on a network, or to a paired watch — and nothing about writing an
+application implies wanting either, so the off-device corner is opt-in:
+without `-D mui_carry` the declaration below does not compile, and the refusal
+says what to add. Turning it on is one line in the build file, where it is
+reviewable.
+
+**Three deliberate acts, none of them a default.** The define, then the
+explicit `dui.mui.CompanionServe.serve` call, and then a **pairing**: even
+served, a surface goes only where somebody named. See
+[dui](https://github.com/lapavoiserie/dui).
+
+*(`-D mui_cafos` still works and means the same thing. It was the spelling when
+CAFOS was the only way a surface could leave; the concept was renamed, not the
+switch.)*
 
 A `@:surface(Companion)` declaration is not rendered by this process at all:
-it is *projected* — over the local [CAFOS](../../cafos/) agent — onto whatever
-machine serves a surface of that id, and rendered there by that machine's own
+it is *carried* — by `dui`, over whichever transport the application chose —
+onto the target somebody paired, and rendered there by that machine's own
 renderer. The remote taps come back as action ids and run your closures; ids
 are stable by place, so a tap racing a re-render does what the unchanged
 button says.
 
 ```hxml
 # in the build file — the switch, once
--D mui_cafos
+-D mui_carry
 ```
 
 ```haxe
