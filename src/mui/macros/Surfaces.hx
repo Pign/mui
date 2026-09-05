@@ -189,16 +189,24 @@ class Surfaces {
 				+ 'declarations cannot be checked against it.', pos);
 			return;
 		}
-		// A Companion is served over the network, to machines this one has
-		// merely *met*. Nothing about declaring surfaces implies wanting that,
-		// so the whole detached-over-cafos corner is off unless the build asks
-		// for it — and asking is one define, in the build file, where it is
-		// reviewable. A backend that states Companion is saying it *could*
-		// serve one (it installs a describer), never that this build does.
-		if (parsed.role == "Companion" && !Context.defined(CAFOS_DEFINE)) {
-			Context.error('a Companion surface is served over the network by cafos, which is off in '
-				+ 'this build: "${parsed.id}" would be declared but never reachable.\n'
-				+ '  Turn it on for this build with -D $CAFOS_DEFINE (and cafos on the classpath), '
+		// A Companion leaves this device — to a machine merely *met* on the
+		// network, or to a paired watch. Nothing about declaring surfaces
+		// implies wanting either, so the whole off-device corner is off unless
+		// the build asks for it, and asking is one define in the build file
+		// where it is reviewable. A backend that states Companion is saying it
+		// *could* serve one (it installs a describer), never that this build
+		// does.
+		//
+		// Two spellings, because the check is older than the answer. It began
+		// when cafos was the only way a surface could leave, and `mui_cafos` is
+		// what every build written since says; `dui` made the transport a
+		// choice, so the general name is the true one and the first is kept
+		// working rather than breaking builds to rename a concept.
+		if (parsed.role == "Companion" && !Context.defined(CARRY_DEFINE) && !Context.defined(CAFOS_DEFINE)) {
+			Context.error('a Companion surface is carried off this device — over the network, or to '
+				+ 'a paired wearable — and that is off in this build: "${parsed.id}" would be '
+				+ 'declared but never reachable.\n'
+				+ '  Turn it on for this build with -D $CARRY_DEFINE (plus dui and a transport), '
 				+ 'or mark the declaration optional.',
 				pos);
 			return;
@@ -224,6 +232,16 @@ class Surfaces {
 		Three deliberate acts, none of them a default.
 	**/
 	public static inline var CAFOS_DEFINE = "mui_cafos";
+
+	/**
+		The same switch, named for what it actually governs.
+
+		A Companion leaves the device; which transport carries it —
+		`dui.cafos` to a machine on the network, `dui.wear` to a paired watch —
+		is the application's choice and not this gate's business. `mui_cafos`
+		still works and means the same thing.
+	**/
+	public static inline var CARRY_DEFINE = "mui_carry";
 
 	/**
 		The roles the backend states it hosts, or `null` if none says.

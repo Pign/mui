@@ -93,7 +93,7 @@ check UnhostedRefused     reject "cui hosts no Glance"
 # The networked corner is opt-in: the same declaration is refused without the
 # switch and accepted with it. Both halves, or "it compiles" would prove
 # nothing about the default.
-check CompanionOffRefused reject "cafos, which is off in this build"
+check CompanionOffRefused reject "carried off this device"
 EXTRA="-D mui_cafos"
 check CompanionOptIn      pass
 EXTRA=""
