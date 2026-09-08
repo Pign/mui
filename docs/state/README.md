@@ -78,6 +78,16 @@ new TextInput("Username", username_),     // auto-converted via TextInputBinding
 
 See [Bindings](state/bindings.md) for details.
 
+## Shared cells
+
+A cell may be shared with another device running the same application,
+with one owner per cell: `@:state(shared(Phone)) var goal:Int`. The owner's
+writes replicate; a peer's write becomes an intent the owner applies; a
+plain `@:state` never leaves the device. `@:intent(Party)` marks a method
+that runs on one party whoever calls it. The rule is `rui.state.Shared`,
+the wire is `dui.state.Share`, and the page is
+[owned state](https://lapavoiserie.github.io/dui/#/owned-state) in dui.
+
 ## The shared core
 
 Every backend's `State<T>` extends
