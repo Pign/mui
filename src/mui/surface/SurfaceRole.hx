@@ -26,7 +26,9 @@ enum SurfaceRole {
 	/** The main window. Implicit — `body()` — and universal. **/
 	Primary;
 
-	/** A read-at-a-glance summary: Sailfish cover, iOS/Android widget. **/
+	/** A read-at-a-glance summary: the Sailfish cover (mounted live), a
+		WidgetKit widget on iOS, an App Widget on Android — the last two
+		sampled, and kept current by `nui.Follow`. **/
 	Glance;
 
 	/** The platform's settings surface: macOS Settings scene, settings page. **/
@@ -42,7 +44,14 @@ enum SurfaceRole {
 	/** An additional top-level window, where the platform has windows. **/
 	Auxiliary;
 
-	/** A companion device or remote view. Declared for completeness; no
-		backend maps it yet. **/
+	/**
+		A live panel on another device — a machine on the network, or a paired
+		watch — rendered there by that device's own renderer, its taps running
+		this application's closures back home.
+
+		Hosted by every backend that installs a describer (five of six; `qui`
+		has none). Carried by `dui`, and off until the build says
+		`-D mui_carry`; even then it goes nowhere until somebody pairs it.
+	**/
 	Companion;
 }
