@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>mui</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+  <link rel="stylesheet" href="vendor/vue.css">
   <style>
     :root {
       --theme-color: #7C3AED;
@@ -49,6 +49,7 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
+      noEmoji: true,
       name: 'mui',
       repo: 'https://github.com/lapavoiserie/mui',
       coverpage: true,
@@ -63,7 +64,7 @@
       routerMode: 'hash'
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="vendor/mermaid.min.js"></script>
   <script>
     mermaid.initialize({ startOnLoad: false, theme: 'dark' });
     function docsifyMermaid(hook) {
@@ -78,9 +79,9 @@
     window.$docsify = window.$docsify || {};
     window.$docsify.plugins = (window.$docsify.plugins || []).concat(docsifyMermaid);
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-haxe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="vendor/docsify.min.js"></script>
+  <script src="vendor/search.min.js"></script>
+  <script src="vendor/prism-haxe.min.js"></script>
+  <script src="vendor/prism-bash.min.js"></script>
 </body>
 </html>
