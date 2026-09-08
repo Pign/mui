@@ -406,7 +406,7 @@
 
     <span class="kw">override function</span> <span class="fn">body</span>():<span class="ty">View</span> {
         <span class="kw">return new</span> <span class="ty">VStack</span>([
-            <span class="kw">new</span> <span class="ty">Text</span>(<span class="str">'Count: ${count.get()}'</span>),
+            <span class="kw">new</span> <span class="ty">Text</span>(<span class="str">'Count: $count'</span>),
             <span class="kw">new</span> <span class="ty">HStack</span>([
                 <span class="kw">new</span> <span class="ty">Button</span>(<span class="str">"-"</span>, <span class="kw">function</span>() count.<span class="fn">set</span>(count.<span class="fn">get</span>() - <span class="num">1</span>)),
                 <span class="kw">new</span> <span class="ty">Button</span>(<span class="str">"+"</span>, <span class="kw">function</span>() count.<span class="fn">set</span>(count.<span class="fn">get</span>() + <span class="num">1</span>)),
@@ -437,7 +437,7 @@
     <div class="feature">
       <div class="icon-box">&#128268;</div>
       <h3>Type-safe bindings</h3>
-      <p>Toggle, TextInput, and Slider accept @:state fields directly. @:from abstracts handle backend conversion at compile time.</p>
+      <p>Toggle, TextInput, and Slider take the cell behind a @:state field — <code>dark_</code> for <code>dark</code> — so they can write back. @:from abstracts handle backend conversion at compile time.</p>
     </div>
     <div class="feature">
       <div class="icon-box">&#128736;</div>

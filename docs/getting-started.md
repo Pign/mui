@@ -91,8 +91,8 @@ class MyApp extends App {
 
     override function body():View {
         return new VStack([
-            new Text(greeting.get()),
-            new Button("Change", function() greeting.set("Hi there!")),
+            new Text(greeting),
+            new Button("Change", function() greeting = "Hi there!"),
         ], 10);
     }
 

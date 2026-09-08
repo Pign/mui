@@ -25,10 +25,10 @@ class Counter extends App {
 
     override function body():View {
         return new VStack([
-            new Text('Count: ${count.get()}'),
+            new Text('Count: $count'),
             new HStack([
-                new Button("-", function() count.set(count.get() - 1)),
-                new Button("+", function() count.set(count.get() + 1)),
+                new Button("-", function() count -= 1),
+                new Button("+", function() count += 1),
             ], 8),
         ], 10);
     }

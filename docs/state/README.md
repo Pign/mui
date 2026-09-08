@@ -12,45 +12,68 @@ class MyApp extends App {
 }
 ```
 
-The `@:state` macro (inherited from the backend's `App` class) transforms fields into reactive `State<T>` wrappers at compile time.
+The `@:state` macro (inherited from the backend's `App` class) turns the field
+into two things at compile time: a reactive **cell** — the backend's `State<T>`
+— named with a trailing underscore, `count_`, and a **property** under the
+field's own name that forwards to it. You write `count`; the cell does the
+work.
 
 ## Reading and Writing
 
-All backends support both `.get()`/`.set()` and `.value`:
+A `@:state` field reads and writes like the plain field it was declared as:
 
 ```haxe
-// Read
-var c = count.get();
-var c = count.value;      // equivalent
+// Read: subscribes the view (or effect) that reads it
+var c = count;
 
-// Write
-count.set(5);
-count.value = 5;          // equivalent
+// Write: notifies, reaches the platform, reaches the durable store
+count = 5;
+count += 1;
+count++;
 ```
 
-Use whichever style you prefer. Both work on all backends.
+Nothing about *when* anything happens is different from the cell's own
+`get()` and `set()` — the property is those two calls, spelled as a field.
+
+## The cell: `count_`
+
+Some things want the cell itself rather than its value: a control that binds
+two ways, a durable store, an untracked read. That is what the underscore
+name is for:
+
+```haxe
+new Toggle("Dark Mode", darkMode_);   // the cell, so the toggle can write back
+count_.peek();                         // an untracked read, said out loud
+```
+
+`darkMode_` is one character from `darkMode`, and it is the same convention
+on every backend: Swift writes `$dark` for this; Haxe has no `$` in an
+identifier, so the cell is the name with a trailing underscore. See
+[`rui.macros.StateProperty`](https://lapavoiserie.github.io/rui/#/state) for
+why a property, and why that spelling.
 
 ## State in UI
 
 ```haxe
 override function body():View {
     return new VStack([
-        new Text('Count: ${count.get()}'),
-        new Button("Increment", function() count.set(count.get() + 1)),
+        new Text('Count: $count'),
+        new Button("Increment", function() count += 1),
     ]);
 }
 ```
 
 ## State in Bindings
 
-Toggle and TextInput accept `@:state` fields directly:
+Toggle and TextInput take the **cell** — the value alone could not tell them
+where to write back:
 
 ```haxe
 @:state var darkMode:Bool = false;
 @:state var username:String = "";
 
-new Toggle("Dark Mode", darkMode),      // auto-converted via ToggleBinding
-new TextInput("Username", username),     // auto-converted via TextInputBinding
+new Toggle("Dark Mode", darkMode_),      // auto-converted via ToggleBinding
+new TextInput("Username", username_),     // auto-converted via TextInputBinding
 ```
 
 See [Bindings](state/bindings.md) for details.
@@ -60,15 +83,15 @@ See [Bindings](state/bindings.md) for details.
 Every backend's `State<T>` extends
 [`rui.state.State`](https://lapavoiserie.github.io/rui/#/state) — the reactive core all
 six backends share. So this much behaves **identically** whichever `-D mui_backend`
-you select:
+you select — on the property, and on the cell behind it:
 
 | | |
 |---|---|
-| `get()` / `value` | tracked read — registers a dependency inside an `Effect` |
-| `set(v)` / `value = v` | write — re-runs dependent effects, then the platform |
-| `peek()` | untracked read |
-| `applyExternal(v)` | a write coming *from* the platform: effects only, no echo back |
-| `name` | the state's identifier |
+| `count` — the cell's `get()` / `value` | tracked read — registers a dependency inside an `Effect` |
+| `count = v` — the cell's `set(v)` / `value = v` | write — re-runs dependent effects, then the platform |
+| `count_.peek()` | untracked read |
+| `count_.applyExternal(v)` | a write coming *from* the platform: effects only, no echo back |
+| `count_.name` | the state's identifier |
 
 `State` stays dispatched per backend rather than collapsing into `rui.state.State`, because
 each backend still has a platform half to run on a write: `cui` raises its redraw flag, `sui`
@@ -82,8 +105,8 @@ import mui.state.Signal;              // Signal, Effect, Scheduler
 import mui.structures.ImmutableList;  // persistent list
 
 var count = new Signal(0);
-new Effect(() -> trace("count = " + count.value));  // runs now, and on change
-count.value = 1;
+new Effect(() -> trace("count = " + count));  // runs now, and on change
+count = 1;
 ```
 
 Use `Signal` for reactive state that is not bound to a view — a queue length a worker
@@ -102,12 +125,14 @@ backends disagree on them, so an app that uses them stops being portable:
 
 | Method | sui | wui | aui | cui | qui | Description |
 |--------|-----|-----|-----|-----|-----|-------------|
-| `.inc(n)` | -- | Yes | Yes | Yes* | Yes* | Increment (a `StateAction` on wui/aui, void on cui/qui) |
-| `.dec(n)` | -- | Yes | Yes | Yes* | Yes* | Decrement (same split) |
-| `.tog()` | -- | Yes | Yes | -- | -- | Toggle boolean (returns a `StateAction`) |
-| `.toggle()` | -- | -- | -- | Yes | Yes | Toggle boolean (void) |
-| `.setTo(v)` | -- | Yes | Yes | Yes | Yes | Returns a `StateAction` on wui/aui, the state itself on cui/qui |
-| `.subscribe()` | -- | Yes | -- | -- | -- | Register a change listener |
-| `.onValueChanged()` | Yes | -- | -- | -- | -- | Change callback, whichever side wrote |
+| `count_.inc(n)` | -- | Yes | Yes | Yes* | Yes* | Increment (a `StateAction` on wui/aui, void on cui/qui) |
+| `count_.dec(n)` | -- | Yes | Yes | Yes* | Yes* | Decrement (same split) |
+| `count_.tog()` | -- | Yes | Yes | -- | -- | Toggle boolean (returns a `StateAction`) |
+| `count_.toggle()` | -- | -- | -- | Yes | Yes | Toggle boolean (void) |
+| `count_.setTo(v)` | -- | Yes | Yes | Yes | Yes | Returns a `StateAction` on wui/aui, the state itself on cui/qui |
+| `count_.subscribe()` | -- | Yes | -- | -- | -- | Register a change listener |
+| `count_.onValueChanged()` | Yes | -- | -- | -- | -- | Change callback, whichever side wrote |
 
 *`IntState`/`FloatState` on cui and qui have `.inc()`/`.dec()` that mutate directly (void return).
+The portable spelling of all of these is the property: `count++`, `count--`,
+`dark = !dark`, `count = 0`.

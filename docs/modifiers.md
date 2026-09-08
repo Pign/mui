@@ -42,7 +42,7 @@ On sui, presentation modifiers accept `@:state` field references directly — no
 ```haxe
 @:state var showSheet:Bool = false;
 
-view.sheet(showSheet, sheetContent)
+view.sheet(showSheet_, sheetContent)
 view.alert("Warning", showAlert, "message")
 view.fullScreenCover(showModal, content)
 view.popover(showPopover, content)

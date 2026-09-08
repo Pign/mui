@@ -6,7 +6,7 @@ Displays read-only text.
 
 ```haxe
 new Text("Hello, world!")
-new Text('Count: ${count.get()}')  // string interpolation
+new Text('Count: $count')  // string interpolation
 new Text("Account", Title)         // set at a shared step
 new Text("A note beside it", Caption)
 ```
@@ -42,7 +42,7 @@ A text input field with a placeholder and state binding.
 ```haxe
 @:state var name:String = "";
 
-new TextInput("Enter your name", name)
+new TextInput("Enter your name", name_)
 ```
 
 **Constructor**: `TextInput(placeholder:String, state:TextInputBinding)`

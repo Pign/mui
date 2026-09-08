@@ -6,7 +6,7 @@ A clickable button with a label and action.
 
 ```haxe
 new Button("Click me", function() {
-    count.set(count.get() + 1);
+    count += 1;
 })
 ```
 
@@ -21,7 +21,7 @@ A boolean switch (toggle on sui/wui, checkbox on cui).
 ```haxe
 @:state var darkMode:Bool = false;
 
-new Toggle("Dark Mode", darkMode)
+new Toggle("Dark Mode", darkMode_)
 ```
 
 **Constructor**: `Toggle(label:String, state:ToggleBinding)`
@@ -39,7 +39,7 @@ A range slider for Float values.
 ```haxe
 @:state var volume:Float = 0.5;
 
-new Slider(volume, 0.0, 1.0)
+new Slider(volume_, 0.0, 1.0)
 ```
 
 **Constructor**: `Slider(state:SliderBinding, min:Float = 0.0, max:Float = 1.0)`
@@ -55,7 +55,7 @@ Shows one view or another based on a Bool state.
 ```haxe
 @:state var isLoggedIn:Bool = false;
 
-new ConditionalView(isLoggedIn,
+new ConditionalView(isLoggedIn_,
     new Text("Welcome!"),
     new Text("Please log in")
 )

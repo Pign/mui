@@ -18,11 +18,11 @@ class Counter extends App {
         return new VStack([
             new Spacer(),
             new Text("Counter"),
-            new Text('Count: ${count.get()}'),
+            new Text('Count: $count'),
             new HStack([
-                new Button("-", function() count.set(count.get() - 1)),
-                new Button("Reset", function() count.set(0)),
-                new Button("+", function() count.set(count.get() + 1)),
+                new Button("-", function() count -= 1),
+                new Button("Reset", function() count = 0),
+                new Button("+", function() count += 1),
             ], 8),
             new Spacer(),
         ], 10);
@@ -39,7 +39,7 @@ class Counter extends App {
 ## What it demonstrates
 
 - `@:state` reactive state declaration
-- `.get()` / `.set()` for cross-platform state access
+- `count` reads and `count = …` writes: the same spelling on every backend
 - `VStack` / `HStack` layout
 - `Button` with closure actions
 - Zero `#if` blocks in the UI code

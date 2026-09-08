@@ -23,7 +23,7 @@ class Collected extends App {
 
 	@:surface(Glance, optional)
 	function today():View {
-		return new Text('count ${count.get()}');
+		return new Text('count $count');
 	}
 
 	@:surface(Glance, "pinned", optional)

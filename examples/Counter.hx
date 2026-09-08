@@ -26,8 +26,8 @@ class Counter extends App {
     @:surface(Glance, optional)
     function glance():View {
         return new VStack([
-            new Text('Count: ${count.get()}'),
-            new Button("+1", function() count.set(count.get() + 1)),
+            new Text('Count: $count'),
+            new Button("+1", function() count += 1),
         ], 8);
     }
 
@@ -38,7 +38,7 @@ class Counter extends App {
     function inspector():View {
         return new VStack([
             new Text("Inspector"),
-            new Text('Count is ${count.get()}'),
+            new Text('Count is $count'),
         ], 8);
     }
 
@@ -46,11 +46,11 @@ class Counter extends App {
         return new VStack([
             new Spacer(),
             new Text("Counter"),
-            new Text('Count: ${count.get()}'),
+            new Text('Count: $count'),
             new HStack([
-                new Button("-", function() count.set(count.get() - 1)),
-                new Button("Reset", function() count.set(0)),
-                new Button("+", function() count.set(count.get() + 1)),
+                new Button("-", function() count -= 1),
+                new Button("Reset", function() count = 0),
+                new Button("+", function() count += 1),
             ], 8),
             new Spacer(),
         ], 10);

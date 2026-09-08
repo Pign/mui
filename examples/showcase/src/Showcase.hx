@@ -91,42 +91,42 @@ class Showcase extends App {
     function profile():View {
         return new VStack([
             new Text("Profile", Subtitle),
-            new TextInput("Your name", name),
+            new TextInput("Your name", name_),
             new Text(greeting()),
         ], 8);
     }
 
     function greeting():String {
-        var typed = name.get();
+        var typed = name;
         return typed == "" ? "We will use this to address you." : 'Hello, $typed.';
     }
 
     function preferences():View {
         return new VStack([
             new Text("Preferences", Subtitle),
-            new Toggle("Email notifications", notify),
-            new Toggle("Weekly digest", digest),
+            new Toggle("Email notifications", notify_),
+            new Toggle("Weekly digest", digest_),
             new Text(summary(), Caption),
 
             new HStack([
                 new Spacer(),
-                new Button(saved.get() ? "Saved" : "Save changes", () -> saved.set(true)),
+                new Button(saved ? "Saved" : "Save changes", () -> saved = true),
             ], 8),
         ], 8);
     }
 
     function summary():String {
-        if (!notify.get() && !digest.get()) return "You will not hear from us.";
-        if (notify.get() && digest.get()) return "Email as it happens, plus a weekly summary.";
-        return notify.get() ? "Email as it happens." : "A weekly summary only.";
+        if (!notify && !digest) return "You will not hear from us.";
+        if (notify && digest) return "Email as it happens, plus a weekly summary.";
+        return notify ? "Email as it happens." : "A weekly summary only.";
     }
 
     function activity():View {
         return new VStack([
             new Text("Recent activity", Subtitle),
 
-            new ConditionalView(hasAnyActivity,
-                new VStack([ForEach.build(recent, line -> new HStack([
+            new ConditionalView(hasAnyActivity_,
+                new VStack([ForEach.build(recent_, line -> new HStack([
                     new Text("•"),
                     new Text(line),
                     new Spacer(),
@@ -135,8 +135,8 @@ class Showcase extends App {
 
             new HStack([
                 new Button("Clear", () -> {
-                    recent.set([]);
-                    hasAnyActivity.set(false);
+                    recent = [];
+                    hasAnyActivity = false;
                 }),
                 new Spacer(),
             ], 8),

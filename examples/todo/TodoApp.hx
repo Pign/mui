@@ -16,27 +16,27 @@ class TodoApp extends App {
     public function new() {
         super();
         appTitle = "Todo";
-        todos.set(["Buy groceries", "Write documentation", "Review pull request"]);
+        todos = ["Buy groceries", "Write documentation", "Review pull request"];
     }
 
     override function body():View {
         return new VStack([
             new Text("Todo List"),
-            new Text('${todos.get().length} items'),
+            new Text('${todos.length} items'),
             new HStack([
-                new TextInput("New item...", inputText),
+                new TextInput("New item...", inputText_),
                 new Button("Add", function() {
-                    var text = inputText.get();
+                    var text = inputText;
                     if (text.length > 0) {
-                        var list = todos.get().copy();
+                        var list = todos.copy();
                         list.push(text);
-                        todos.set(list);
-                        inputText.set("");
+                        todos = list;
+                        inputText = "";
                     }
                 }),
             ], 8),
             new Spacer(),
-            ForEach.build(todos, function(item) {
+            ForEach.build(todos_, function(item) {
                 return new HStack([
                     new Text(item),
                     new Spacer(),
@@ -54,9 +54,9 @@ class TodoApp extends App {
     @:surface(Commands, optional)
     function shortcuts():Array<Command> {
         return [
-            new Command("Clear completed", function() todos.set([])).key("ctrl+k"),
+            new Command("Clear completed", function() todos = []).key("ctrl+k"),
             new Command("Reset examples", function()
-                todos.set(["Buy groceries", "Write documentation", "Review pull request"])),
+                todos = ["Buy groceries", "Write documentation", "Review pull request"]),
         ];
     }
 
@@ -70,7 +70,7 @@ class TodoApp extends App {
     function preferences():View {
         return new VStack([
             new Text("Todo preferences"),
-            new Text('${todos.get().length} items kept'),
+            new Text('${todos.length} items kept'),
         ], 8);
     }
 
@@ -83,7 +83,7 @@ class TodoApp extends App {
     function glance():View {
         return new VStack([
             new Text("Todo"),
-            new Text('${todos.get().length} items'),
+            new Text('${todos.length} items'),
         ], 8);
     }
 

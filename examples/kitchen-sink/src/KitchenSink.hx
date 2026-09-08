@@ -114,36 +114,36 @@ class KitchenSink extends App {
     function controlsTab():View {
         return new ScrollView([new VStack([
             heading("Buttons and state"),
-            new Text('Count: ${count.get()}'),
+            new Text('Count: $count'),
             new HStack([
-                new Button("-", () -> count.set(count.get() - 1)),
-                new Button("Reset", () -> count.set(0)),
-                new Button("+", () -> count.set(count.get() + 1)),
+                new Button("-", () -> count -= 1),
+                new Button("Reset", () -> count = 0),
+                new Button("+", () -> count += 1),
             ], 8),
 
             new Divider(),
 
             heading("Toggles"),
-            new Toggle("Notifications", notify),
-            new Toggle("Dark mode", darkMode),
-            new Text('Notifications are ${notify.get() ? "on" : "off"}.'),
+            new Toggle("Notifications", notify_),
+            new Toggle("Dark mode", darkMode_),
+            new Text('Notifications are ${notify ? "on" : "off"}.'),
 
             new Divider(),
 
             heading("Text input"),
-            new TextInput("Your name", name),
+            new TextInput("Your name", name_),
             new Text(greeting()),
 
             new Divider(),
 
             heading("A value, two ways"),
-            new Slider(level),
-            new ProgressView("Level", level.get()),
+            new Slider(level_),
+            new ProgressView("Level", level),
         ], 12)]);
     }
 
     function greeting():String {
-        var typed = name.get();
+        var typed = name;
         return typed == "" ? "Type above, and this line follows." : 'Hello, $typed.';
     }
 
@@ -153,7 +153,7 @@ class KitchenSink extends App {
         return new ScrollView([new VStack([
             heading("A loop"),
             note("Each row below is built by the same closure."),
-            new VStack([ForEach.build(items, item -> new HStack([
+            new VStack([ForEach.build(items_, item -> new HStack([
                 new Text("•"),
                 new Text(item),
                 new Spacer(),
@@ -161,13 +161,13 @@ class KitchenSink extends App {
 
             new HStack([
                 new Button("Add", () -> {
-                    items.set(items.get().concat(["item " + (items.get().length + 1)]));
-                    hasAny.set(true);
+                    items = items.concat(["item " + (items.length + 1)]);
+                    hasAny = true;
                 }),
                 new Button("Drop", () -> {
-                    var current = items.get();
-                    if (current.length > 0) items.set(current.slice(0, current.length - 1));
-                    hasAny.set(items.get().length > 0);
+                    var current = items;
+                    if (current.length > 0) items = current.slice(0, current.length - 1);
+                    hasAny = items.length > 0;
                 }),
             ], 8),
 
@@ -175,7 +175,7 @@ class KitchenSink extends App {
 
             heading("A condition"),
             note("The line below swaps when the list empties."),
-            new ConditionalView(hasAny,
+            new ConditionalView(hasAny_,
                 new Text("The list has something in it."),
                 new Text("The list is empty.")),
         ], 12)]);

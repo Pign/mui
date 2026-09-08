@@ -18,7 +18,7 @@ mui provides `ToggleBinding` and `TextInputBinding` -- Haxe abstract types with 
 @:state var darkMode:Bool = false;
 
 // This works on all backends:
-new Toggle("Dark Mode", darkMode)
+new Toggle("Dark Mode", darkMode_)
 ```
 
 The `ToggleBinding` abstract wraps a different underlying type per backend:
@@ -35,7 +35,7 @@ The `ToggleBinding` abstract wraps a different underlying type per backend:
 @:state var email:String = "";
 
 // This works on all backends:
-new TextInput("Enter email", email)
+new TextInput("Enter email", email_)
 ```
 
 | Backend | Underlying type | `@:from` conversion |
@@ -49,7 +49,7 @@ new TextInput("Enter email", email)
 Haxe's `@:from` on abstract types enables implicit conversion at the call site. When the compiler sees:
 
 ```haxe
-new Toggle("Dark Mode", darkMode)
+new Toggle("Dark Mode", darkMode_)
 ```
 
 It recognizes that `darkMode` (a `BoolState` on cui, `State<Bool>` on sui/wui) doesn't match `ToggleBinding`, so it looks for an `@:from` function that accepts the source type. The conversion runs at compile time with zero runtime overhead.

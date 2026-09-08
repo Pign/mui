@@ -11,7 +11,7 @@ class Counter extends App {
 ```
 
 That is the whole of the API. `count` is read and written exactly like any
-other `@:state` cell — `count.get()`, `count.set(3)`, bindings, effects. What
+other `@:state` cell — `count`, `count = 3`, bindings, effects. What
 changes is where its value comes from when the cell is built, and where it goes
 when it is written.
 

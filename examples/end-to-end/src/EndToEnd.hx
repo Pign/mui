@@ -26,7 +26,7 @@ class EndToEnd extends mui.App {
 	override public function view():nui.Node {
 		return ui(<VStack spacing={8}>
 			<Text text="Écrit en markup mui"/>
-			<Text text={"clics : " + clics.value}/>
+			<Text text={"clics : " + clics}/>
 			<Button text="Compter" onClick={compter}/>
 		</VStack>);
 	}
@@ -34,7 +34,7 @@ class EndToEnd extends mui.App {
 	// Rien ici ne demande un re-rendu : la vue lit `clics`, donc l'effet qui
 	// l'entoure s'y est abonné, et l'écriture ci-dessous suffit.
 	function compter():Void {
-		clics.value = clics.value + 1;
-		trace('[mui] clic n°${clics.value}');
+		clics = clics + 1;
+		trace('[mui] clic n°$clics');
 	}
 }

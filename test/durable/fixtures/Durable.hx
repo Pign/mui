@@ -15,13 +15,13 @@ class Durable extends App {
 	@:state(durable, key = "durable.fixture.label") var label:String = "none";
 	@:state var volatile:Int = 100;
 
-	override function body():View return new Text('${count.get()}');
+	override function body():View return new Text('$count');
 
 	static function main() {
 		var app = new Durable();
-		Sys.println('read ${app.count.get()} ${app.label.get()} ${app.volatile.get()}');
-		app.count.set(app.count.get() + 1);
-		app.label.set("wrote-" + app.count.get());
-		app.volatile.set(app.volatile.get() + 1);
+		Sys.println('read ${app.count} ${app.label} ${app.volatile}');
+		app.count = app.count + 1;
+		app.label = "wrote-" + app.count;
+		app.volatile = app.volatile + 1;
 	}
 }

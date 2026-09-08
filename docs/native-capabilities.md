@@ -95,7 +95,7 @@ stopped, and forgetting is a leak that grows with use.
 public function new() {
     super();
     var watcher = new Effect(() -> {
-        var stop = Watch.changes(net, 1000, v -> online.value = v);
+        var stop = Watch.changes(net, 1000, v -> online = v);
         Effect.onCleanup(stop);
     });
     lifetime.own(watcher.dispose);

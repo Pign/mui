@@ -80,9 +80,9 @@ class Init {
 		by hand.
 
 		Nothing else needs one. Every backend's `App` carries `appTitle`, and
-		every backend's `State` is `rui`'s underneath, so `get()` and `set()` mean
-		the same thing on all six — where this template used to branch between
-		`count.get()` and `count.value`.
+		every backend's `@:state` is a property over `rui`'s cell, so `count`
+		reads and `count = ` writes mean the same thing on all six — where this
+		template used to branch between `count.get()` and `count.value`.
 	**/
 	static function skeleton(name:String):String {
 		return 'import mui.App;
@@ -105,10 +105,10 @@ class $name extends App {
 		return new VStack([
 			new Spacer(),
 			new Text("Hello from $name!", Title),
-			new Text("Count: " + count.get()),
+			new Text("Count: " + count),
 			new HStack([
-				new Button("-", () -> count.set(count.get() - 1)),
-				new Button("+", () -> count.set(count.get() + 1)),
+				new Button("-", () -> count--),
+				new Button("+", () -> count++),
 			], 8),
 			new Spacer(),
 		], 10);

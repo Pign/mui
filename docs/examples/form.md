@@ -22,19 +22,19 @@ class FormApp extends App {
         return new VStack([
             new Text("Registration"),
             new Divider(),
-            new TextInput("Enter your name", name),
-            new TextInput("Enter your email", email),
+            new TextInput("Enter your name", name_),
+            new TextInput("Enter your email", email_),
             new Divider(),
-            new Toggle("Subscribe to newsletter", newsletter),
-            new Toggle("I accept the terms", terms),
+            new Toggle("Subscribe to newsletter", newsletter_),
+            new Toggle("I accept the terms", terms_),
             new Divider(),
             new HStack([
                 new Button("Submit", function() { /* handle */ }),
                 new Button("Clear", function() {
-                    name.set("");
-                    email.set("");
-                    newsletter.set(true);
-                    terms.set(false);
+                    name = "";
+                    email = "";
+                    newsletter = true;
+                    terms = false;
                 }),
             ], 8),
             new Spacer(),

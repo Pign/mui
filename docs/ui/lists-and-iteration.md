@@ -9,7 +9,7 @@
 ```haxe
 @:state var items:Array<String> = [];
 
-ForEach.build(items, function(item) {
+ForEach.build(items_, function(item) {
     return new Text(item);
 })
 ```
@@ -39,7 +39,7 @@ array is read:
 |---|---|---|
 | `sui` | `new sui.ui.ForEach(items, "_i", …)` | walked at compile time — the builder body becomes string templates, `item.title` → `{todos[_i].title}` |
 | `qui`, `wui`, `aui` | `new <backend>.ui.ForEach(items, builder)` | the **cell**, handed over: the list rebuilds itself when it changes |
-| `cui`, `pui` | `new <backend>.ui.ForEach(items.get(), builder)` | read here — both rebuild their whole tree on a write, so handing the cell over would buy nothing |
+| `cui`, `pui` | `new <backend>.ui.ForEach(items, builder)` | read here — both rebuild their whole tree on a write, so handing the cell over would buy nothing |
 
 ### Supported patterns
 

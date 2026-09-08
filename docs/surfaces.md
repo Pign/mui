@@ -113,7 +113,7 @@ something is the surface's own effect: the declaration is evaluated inside one,
 and republishes. You write no call:
 
 ```haxe
-new Button("-", function() count.set(count.get() - 1)),   // the widget follows
+new Button("-", function() count--),   // the widget follows
 ```
 
 Every host answers that under a different name — Android pushes a fresh picture
@@ -278,8 +278,8 @@ button says.
 @:surface(Companion)
 function panel():View {
 	return new VStack([
-		new Text('count: ${count.get()}'),
-		new Button("Add", () -> count.set(count.get() + 10)),
+		new Text('count: $count'),
+		new Button("Add", () -> count += 10),
 	]);
 }
 

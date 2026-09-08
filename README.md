@@ -42,10 +42,10 @@ class Counter extends App {
 
     override function body():View {
         return new VStack([
-            new Text('Count: ${count.get()}'),
+            new Text('Count: $count'),
             new HStack([
-                new Button("-", function() count.set(count.get() - 1)),
-                new Button("+", function() count.set(count.get() + 1)),
+                new Button("-", function() count -= 1),
+                new Button("+", function() count += 1),
             ], 8),
         ], 10);
     }
@@ -91,8 +91,8 @@ Toggle and TextInput accept `@:state` fields directly via type-safe abstract bin
 @:state var username:String = "";
 
 // Works on all backends — no #if needed
-new Toggle("Dark Mode", darkMode),
-new TextInput("Enter username", username),
+new Toggle("Dark Mode", darkMode_),
+new TextInput("Enter username", username_),
 ```
 
 ## ForEach
@@ -103,10 +103,10 @@ new TextInput("Enter username", username),
 @:state var todos:Array<String> = [];
 
 // Works on all backends
-ForEach.build(todos, item -> new Text(item))
+ForEach.build(todos_, item -> new Text(item))
 
 // With object fields
-ForEach.build(todos, item -> new HStack([
+ForEach.build(todos_, item -> new HStack([
     new Text(item.title),
     new Spacer(),
 ]))
@@ -116,18 +116,18 @@ On SUI, the macro transforms `item.title` references into string templates for S
 
 ## State API
 
-The `@:state` macro works on all backends. All backends support both `.get()`/`.set()` and `.value`:
+The `@:state` macro works on all backends. The field reads and writes as the field it was declared as; the cell behind it is `count_`, for a control that binds:
 
 ```haxe
 @:state var count:Int = 0;
 
 // Read
-var c = count.get();    // works everywhere
-var c = count.value;    // works everywhere
+var c = count;    // works everywhere
+var c = count;    // works everywhere
 
 // Write
-count.set(5);           // works everywhere
-count.value = 5;        // works everywhere
+count = 5;           // works everywhere
+count = 5;        // works everywhere
 ```
 
 ## App Class

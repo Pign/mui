@@ -37,8 +37,8 @@ class Counter extends ViewComponent {
 
     override public function body():View {
         return new HStack([
-            new Text(label + ": " + n.get()),
-            new Button("+", n.inc())
+            new Text(label + ": " + n),
+            new Button("+", n++)
         ]);
     }
 }
